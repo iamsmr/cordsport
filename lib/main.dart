@@ -16,7 +16,17 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: CustomRouter.onGenerateRoute,
       initialRoute: "/wrapper",
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          color: Colors.white,
+          iconTheme: IconThemeData(
+            color: Colors.grey,
+          ),
+        ),
         primarySwatch: Colors.yellow,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black,
+        ),
       ),
     );
   }
