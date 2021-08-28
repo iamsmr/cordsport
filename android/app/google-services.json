@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "699484920697",
+    "project_id": "cordspot",
+    "storage_bucket": "cordspot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699484920697:android:5fc367e114740903a66da8",
+        "android_client_info": {
+          "package_name": "com.cordspot.sameer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "699484920697-bm775hoo9fo2psva14u7fnr8ua4f84rl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cordspot.sameer",
+            "certificate_hash": "b5db3ccc9668d25f1564b365f8455bc79d80060f"
+          }
+        },
+        {
+          "client_id": "699484920697-uquadobq87c2dd99778e5paof5c7er1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACX9fncg7lGzMBKuYQK5jMaa1U3kp0DbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "699484920697-uquadobq87c2dd99778e5paof5c7er1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
