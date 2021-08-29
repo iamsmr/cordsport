@@ -9,7 +9,6 @@ class PhoneAuthPage extends StatefulWidget {
 }
 
 class _PhoneAuthPageState extends State<PhoneAuthPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -49,35 +48,29 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                       ),
                     ),
                     SizedBox(height: 50),
-                    Form(
-                      key: _formKey,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          validator: (val) => val!.length < 10
-                              ? "Enter a valid Phone number"
-                              : null,
-                          style: TextStyle(height: 1.6),
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp('[0-9+]+'),
-                            ),
-                            LengthLimitingTextInputFormatter(15),
-                          ],
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            filled: false,
-                            hintText: "Phone Number",
-                            hintStyle: TextStyle(
-                              color: Color(0xffCACACA),
-                              fontSize: 17,
-                            ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                      ),
+                      child: TextFormField(
+                        style: TextStyle(height: 1.6),
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp('[0-9+]+'),
+                          ),
+                          LengthLimitingTextInputFormatter(15),
+                        ],
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          filled: false,
+                          hintText: "Phone Number",
+                          hintStyle: TextStyle(
+                            color: Color(0xffCACACA),
+                            fontSize: 17,
                           ),
                         ),
                       ),
@@ -86,9 +79,10 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     MaterialButton(
                       minWidth: double.infinity,
                       height: 50,
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {}
-                      },
+                      onPressed: () => Navigator.pushNamed(
+                        context,
+                        "/phoneVerification",
+                      ),
                       child: Text(
                         "Continue",
                         style: TextStyle(fontSize: 17),
