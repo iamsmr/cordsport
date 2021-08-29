@@ -2,10 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 abstract class BaseAuthRepository {
   Stream<auth.User?> get userChanged;
-  Future<void> continueWithPhoneNumber({
+  Future<String> verifyPhoneNumber({
     required String phoneNumber,
-    required int smsCode,
   });
 
+  Future<auth.User?> continueWithPhone({
+    required String verificationId,
+    required String smsCode,
+  });
   Future<void> logout();
 }

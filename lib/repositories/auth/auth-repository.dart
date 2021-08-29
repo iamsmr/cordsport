@@ -10,11 +10,11 @@ class AuthRepository extends BaseAuthRepository {
       : _firebaseAuth = firebaseAuth ?? auth.FirebaseAuth.instance;
 
   @override
-  Future<void> continueWithPhoneNumber({
+  Future<String> verifyPhoneNumber({
     required String phoneNumber,
-    required int smsCode,
   }) async {
     try {
+      late String verificationId;
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         verificationCompleted: (credential) async {
@@ -22,18 +22,13 @@ class AuthRepository extends BaseAuthRepository {
         },
         verificationFailed: (exception) {},
         timeout: const Duration(seconds: 120),
-        codeSent: (String verificationId, int? resendToken) async {
-          auth.PhoneAuthCredential credential =
-              auth.PhoneAuthProvider.credential(
-            verificationId: verificationId,
-            smsCode: smsCode.toString(),
-          );
-          await _firebaseAuth.signInWithCredential(credential);
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
+        codeSent: (String verificationId, int? resendToken) async {},
+        codeAutoRetrievalTimeout: (String vId) {
+          verificationId = vId;
           // Auto-resolution timed out...
         },
       );
+      return verificationId;
     } on auth.FirebaseAuthException catch (err) {
       throw Failure(
         code: err.code,
@@ -44,6 +39,26 @@ class AuthRepository extends BaseAuthRepository {
         code: err.code,
         message: err.message ?? "",
       );
+    }
+  }
+
+  @override
+  Future<auth.User?> continueWithPhone({
+    required String verificationId,
+    required String smsCode,
+  }) async {
+    try {
+      auth.PhoneAuthCredential credential = auth.PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+
+      final userCred = await _firebaseAuth.signInWithCredential(credential);
+      return userCred.user;
+    } on auth.FirebaseAuthException catch (e) {
+      throw Failure(message: e.message ?? '', code: e.code);
+    } on PlatformException catch (e) {
+      throw Failure(message: e.message ?? "", code: e.code);
     }
   }
 
