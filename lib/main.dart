@@ -12,7 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Cordspot',
+      debugShowCheckedModeBanner: false,
       onGenerateRoute: CustomRouter.onGenerateRoute,
       initialRoute: "/wrapper",
       theme: ThemeData(
