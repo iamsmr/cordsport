@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/wrapper",
       theme: ThemeData(
         appBarTheme: AppBarTheme(
+          elevation: 1,
           centerTitle: true,
           color: Colors.white,
           iconTheme: IconThemeData(

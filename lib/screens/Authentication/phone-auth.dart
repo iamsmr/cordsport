@@ -79,7 +79,10 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                     MaterialButton(
                       minWidth: double.infinity,
                       height: 50,
-                      onPressed: () {},
+                      onPressed: () => Navigator.pushNamed(
+                        context,
+                        "/phoneVerification",
+                      ),
                       child: Text(
                         "Continue",
                         style: TextStyle(fontSize: 17),

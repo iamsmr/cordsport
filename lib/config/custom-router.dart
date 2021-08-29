@@ -12,6 +12,8 @@ class CustomRouter {
         );
       case Wrapper.routeName:
         return Wrapper.route();
+      case VerificationPage.routeName:
+        return VerificationPage.route();
       default:
         return _errorRoute();
     }
