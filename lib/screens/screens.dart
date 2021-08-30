@@ -1,4 +1,6 @@
 export 'wrapper/wrapper.dart';
 
-export 'Authentication/phone-auth.dart';
+export 'Authentication/login-page.dart';
 export 'Authentication/verification-page.dart';
+
+export 'home/home-page.dart';

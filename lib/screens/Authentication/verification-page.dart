@@ -1,9 +1,18 @@
+import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-class VerificationPage extends StatelessWidget {
+class VerificationPage extends StatefulWidget {
   static const String routeName = "/phoneVerification";
-  static Route route() => MaterialPageRoute(builder: (_) => VerificationPage());
+  static Route route() =>
+      MaterialPageRoute(builder: (context) => VerificationPage());
+
+  @override
+  _VerificationPageState createState() => _VerificationPageState();
+}
+
+class _VerificationPageState extends State<VerificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +42,11 @@ class VerificationPage extends StatelessWidget {
                 Container(
                   constraints: BoxConstraints(maxWidth: 300),
                   child: PinPut(
+                    animationDuration: Duration(seconds: 0),
+                    checkClipboard: true,
+                    onChanged: (val) {
+                      context.read<AuthCubit>().smsCodeChanged(val);
+                    },
                     fieldsCount: 4,
                     withCursor: true,
                     textStyle: const TextStyle(
@@ -50,7 +64,9 @@ class VerificationPage extends StatelessWidget {
                 MaterialButton(
                   minWidth: 200,
                   height: 50,
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<AuthCubit>().signInWithPhoneNumber();
+                  },
                   child: Text(
                     "Verify",
                     style: TextStyle(fontSize: 17),
@@ -73,9 +89,12 @@ class VerificationPage extends StatelessWidget {
     borderRadius: BorderRadius.circular(10.0),
     boxShadow: [
       BoxShadow(
-          color: Color.fromRGBO(198, 193, 193, 0.25),
-          offset: Offset(0, 4),
-          blurRadius: 4)
+        color: Color.fromRGBO(198, 193, 193, 0.25),
+        offset: Offset(0, 4),
+        blurRadius: 4,
+      )
     ],
   );
 }
+
+// +15555215554
