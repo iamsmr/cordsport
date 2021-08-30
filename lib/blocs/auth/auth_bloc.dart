@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:codespot/repositories/repositories.dart';
@@ -11,9 +10,21 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
+  late StreamSubscription<auth.User?> _userSubscription;
+
   AuthBloc({required AuthRepository authRepository})
       : _authRepository = authRepository,
-        super(AuthState.initial());
+        super(AuthState.initial()) {
+    _userSubscription = _authRepository.userChanged.listen(
+      (user) => add(AuthUserChanged(user: user)),
+    );
+  }
+
+  @override
+  Future<void> close() {
+    _userSubscription.cancel();
+    return super.close();
+  }
 
   @override
   Stream<AuthState> mapEventToState(

@@ -1,6 +1,6 @@
 part of 'phoneauth_cubit.dart';
 
-enum PhoneAuthStatus { initial, loading, error, success }
+enum PhoneAuthStatus { initial, loading, goToVerification, error, success }
 
 class PhoneAuthState extends Equatable {
   final String phoneNumber;

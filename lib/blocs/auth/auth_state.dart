@@ -14,7 +14,7 @@ class AuthState extends Equatable {
   factory AuthState.initial() => const AuthState();
 
   factory AuthState.unauthenticated() {
-    return const AuthState(status: AuthStatus.unauthenticated);
+    return  AuthState(status: AuthStatus.unauthenticated);
   }
 
   factory AuthState.authenticated({required auth.User user}) {

@@ -2,13 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:codespot/models/failure.dart';
 import 'package:codespot/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 part 'phoneauth_state.dart';
 
 class PhoneAuthCubit extends Cubit<PhoneAuthState> {
   AuthRepository _authRepository;
-  PhoneAuthCubit({required AuthRepository authRepository})
-      : _authRepository = authRepository,
+  final auth.FirebaseAuth _firebaseAuth;
+
+  PhoneAuthCubit({
+    required AuthRepository authRepository,
+    auth.FirebaseAuth? firebaseAuth,
+  })  : _firebaseAuth = firebaseAuth ?? auth.FirebaseAuth.instance,
+        _authRepository = authRepository,
         super(PhoneAuthState.initial());
 
   void phoneNumberChanged(String phoneNumber) {
@@ -27,19 +33,28 @@ class PhoneAuthCubit extends Cubit<PhoneAuthState> {
   void verifyPhoneNumber() async {
     if (!state.isValid && state.status == PhoneAuthStatus.loading) return;
     emit(state.copyWith(status: PhoneAuthStatus.loading));
-    try {
-      String verificationNum = await _authRepository.verifyPhoneNumber(
-        phoneNumber: state.phoneNumber,
-      );
-      emit(
-        state.copyWith(
-          verificationNumber: verificationNum,
-          status: PhoneAuthStatus.success,
-        ),
-      );
-    } on Failure catch (e) {
-      emit(state.copyWith(failure: e, status: PhoneAuthStatus.error));
-    }
+    await _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: state.phoneNumber,
+      verificationCompleted: (credential) async {
+        await _firebaseAuth.signInWithCredential(credential);
+      },
+      verificationFailed: (e) {
+        emit(state.copyWith(
+          failure: Failure(message: e.message, code: e.code),
+          status: PhoneAuthStatus.error,
+        ));
+      },
+      timeout: const Duration(seconds: 60),
+      codeSent: (String vId, int? resendToken) async {
+        emit(
+          state.copyWith(
+            verificationNumber: vId,
+            status: PhoneAuthStatus.goToVerification,
+          ),
+        );
+      },
+      codeAutoRetrievalTimeout: (String vId) {},
+    );
   }
 
   void signInWithPhoneNumber() async {
