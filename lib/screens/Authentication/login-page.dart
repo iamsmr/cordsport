@@ -87,8 +87,11 @@ class _LoginPageState extends State<LoginPage> {
                                       RegExp regExp = new RegExp(patttern);
                                       if (!regExp.hasMatch(val!)) {
                                         return "Enter a valid phone";
+                                      } else if (val.length < 8) {
+                                        return "Plase Enter phone number";
+                                      } else {
+                                        return null;
                                       }
-                                      return null;
                                     },
                                     keyboardType: TextInputType.phone,
                                     selectorConfig: SelectorConfig(
@@ -97,9 +100,11 @@ class _LoginPageState extends State<LoginPage> {
                                           PhoneInputSelectorType.DROPDOWN,
                                     ),
                                     onInputChanged: (PhoneNumber value) {
-                                      context.read<AuthCubit>()
+                                      context
+                                          .read<AuthCubit>()
                                           .phoneNumberChanged(
-                                              value.phoneNumber!);
+                                            value.phoneNumber!,
+                                          );
                                     },
                                   ),
                                 ),
@@ -110,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                                 height: 50,
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    verifyPhoneNumber(state.isValid, context);
+                                    verifyPhoneNumber(context);
                                   }
                                 },
                                 child: Text(
@@ -190,10 +195,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void verifyPhoneNumber(bool isValid, BuildContext context) {
-    if (isValid) {
-      context.read<AuthCubit>().verifyPhoneNumber();
-    }
+  void verifyPhoneNumber(BuildContext context) {
+    context.read<AuthCubit>().verifyPhoneNumber();
   }
 
   Widget linearProgressLoading() {
