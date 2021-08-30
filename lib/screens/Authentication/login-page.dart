@@ -1,9 +1,12 @@
-import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
-import 'package:codespot/screens/Authentication/verification-page.dart';
+import 'package:codespot/widget/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+
+import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
+import 'package:codespot/screens/Authentication/verification-page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -24,10 +27,12 @@ class _LoginPageState extends State<LoginPage> {
             if (state.status == PhoneAuthStatus.error) {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: Text("Something Went Wrong!."),
-                  content: Text(state.failure.message ?? ''),
-                ),
+                builder: (context) {
+                  return CustomErrorDialgo(
+                    title: "Something went wrong!",
+                    content: state.failure.message ?? "",
+                  );
+                },
               );
             } else if (state.status == PhoneAuthStatus.goToVerification &&
                 state.smsCode == null) {
@@ -37,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context, state) {
             return Scaffold(
               // resizeToAvoidBottomInset: false,
-              backgroundColor: Color(0xffF6F5FA),
+              backgroundColor: const Color(0xffF6F5FA),
               body: SafeArea(
                 child: Stack(
                   children: [
@@ -53,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                                 "assets/images/Logo.png",
                                 height: 60,
                               ),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                               Text(
                                 "CORDSPOT",
                                 style: TextStyle(
@@ -61,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               Text(
                                 "location based anynomous\nchating application",
                                 textAlign: TextAlign.center,

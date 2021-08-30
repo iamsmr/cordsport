@@ -1,11 +1,13 @@
-import 'package:codespot/blocs/bloc-observer.dart';
-import 'package:codespot/blocs/blocs.dart';
-import 'package:codespot/config/custom-router.dart';
-import 'package:codespot/repositories/repositories.dart';
-import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'package:codespot/blocs/bloc-observer.dart';
+import 'package:codespot/blocs/blocs.dart';
+import 'package:codespot/repositories/repositories.dart';
+
+import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
+import 'package:codespot/config/custom-router.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
