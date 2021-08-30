@@ -2,15 +2,15 @@ import 'package:codespot/models/models.dart';
 import 'package:codespot/repositories/auth/base-auth-repository.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepository extends BaseAuthRepository {
   final auth.FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn;
 
-  AuthRepository({auth.FirebaseAuth? firebaseAuth})
+  AuthRepository({auth.FirebaseAuth? firebaseAuth, GoogleSignIn? googleSignIn})
       : _firebaseAuth = firebaseAuth ?? auth.FirebaseAuth.instance,
-        super() {
-    // _firebaseAuth.setSettings();
-  }
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   // @override
   // Future<String> verifyPhoneNumber({
@@ -47,6 +47,27 @@ class AuthRepository extends BaseAuthRepository {
 
   @override
   Stream<auth.User?> get userChanged => _firebaseAuth.userChanges();
+
+  @override
+  Future<auth.User?> loginWithGoogleAccount() async {
+    try {
+      GoogleSignInAccount? signInAccount = await _googleSignIn.signIn();
+      GoogleSignInAuthentication signInAuthentication =
+          await signInAccount!.authentication;
+      auth.AuthCredential credential = auth.GoogleAuthProvider.credential(
+          accessToken: signInAuthentication.accessToken,
+          idToken: signInAuthentication.idToken);
+
+      final authResult = await _firebaseAuth.signInWithCredential(credential);
+      final user = authResult.user;
+
+      return user;
+    } on auth.FirebaseAuthException catch (e) {
+      throw Failure(code: e.code, message: e.message ?? "");
+    } on PlatformException catch (e) {
+      throw Failure(code: e.code, message: e.message ?? "");
+    }
+  }
 
   @override
   Future<void> logout() async {

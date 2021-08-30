@@ -6,16 +6,16 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 part 'phoneauth_state.dart';
 
-class PhoneAuthCubit extends Cubit<PhoneAuthState> {
+class AuthCubit extends Cubit<AuthCubitState> {
   AuthRepository _authRepository;
   final auth.FirebaseAuth _firebaseAuth;
 
-  PhoneAuthCubit({
+  AuthCubit({
     required AuthRepository authRepository,
     auth.FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? auth.FirebaseAuth.instance,
         _authRepository = authRepository,
-        super(PhoneAuthState.initial());
+        super(AuthCubitState.initial());
 
   void phoneNumberChanged(String phoneNumber) {
     emit(
@@ -33,6 +33,9 @@ class PhoneAuthCubit extends Cubit<PhoneAuthState> {
   void verifyPhoneNumber() async {
     if (!state.isValid && state.status == PhoneAuthStatus.loading) return;
     emit(state.copyWith(status: PhoneAuthStatus.loading));
+
+    // TODO: later implement in better way
+
     await _firebaseAuth.verifyPhoneNumber(
       phoneNumber: state.phoneNumber,
       verificationCompleted: (credential) async {
@@ -68,6 +71,16 @@ class PhoneAuthCubit extends Cubit<PhoneAuthState> {
         smsCode: state.smsCode!,
       );
       emit(state.copyWith(status: PhoneAuthStatus.success));
+    } on Failure catch (e) {
+      emit(state.copyWith(failure: e, status: PhoneAuthStatus.error));
+    }
+  }
+
+  void loginWithGoogleAcc() async {
+    if (!state.isValid && state.status == PhoneAuthStatus.loading) return;
+    emit(state.copyWith(status: PhoneAuthStatus.loading));
+    try {
+      await _authRepository.loginWithGoogleAccount();
     } on Failure catch (e) {
       emit(state.copyWith(failure: e, status: PhoneAuthStatus.error));
     }

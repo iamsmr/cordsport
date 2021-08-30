@@ -1,15 +1,15 @@
-part of 'phoneauth_cubit.dart';
+part of 'auth-cubit.dart';
 
 enum PhoneAuthStatus { initial, loading, goToVerification, error, success }
 
-class PhoneAuthState extends Equatable {
+class AuthCubitState extends Equatable {
   final String phoneNumber;
   final String verificationNumber;
   final String? smsCode;
   final Failure failure;
   final PhoneAuthStatus status;
 
-  const PhoneAuthState({
+  const AuthCubitState({
     required this.phoneNumber,
     required this.verificationNumber,
     required this.smsCode,
@@ -19,8 +19,8 @@ class PhoneAuthState extends Equatable {
 
   bool get isValid => phoneNumber.isNotEmpty && phoneNumber.length > 9;
 
-  static PhoneAuthState initial() {
-    return PhoneAuthState(
+  static AuthCubitState initial() {
+    return AuthCubitState(
       phoneNumber: "",
       verificationNumber: "",
       smsCode: "",
@@ -40,14 +40,14 @@ class PhoneAuthState extends Equatable {
     ];
   }
 
-  PhoneAuthState copyWith({
+  AuthCubitState copyWith({
     String? phoneNumber,
     String? verificationNumber,
     String? smsCode,
     Failure? failure,
     PhoneAuthStatus? status,
   }) {
-    return PhoneAuthState(
+    return AuthCubitState(
       phoneNumber: phoneNumber ?? this.phoneNumber,
       verificationNumber: verificationNumber ?? this.verificationNumber,
       smsCode: smsCode ?? this.smsCode,

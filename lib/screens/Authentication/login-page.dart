@@ -1,23 +1,22 @@
-import 'package:codespot/screens/Authentication/cubit/phoneauth_cubit.dart';
+import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
 import 'package:codespot/screens/Authentication/verification-page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AuthenticationPage extends StatefulWidget {
-
+class LoginPage extends StatefulWidget {
   @override
-  _AuthenticationPageState createState() => _AuthenticationPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _AuthenticationPageState extends State<AuthenticationPage> {
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: BlocConsumer<PhoneAuthCubit, PhoneAuthState>(
+        child: BlocConsumer<AuthCubit, AuthCubitState>(
           listener: (context, state) {
             print(state);
             if (state.status == PhoneAuthStatus.error) {
@@ -74,7 +73,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                           ),
                           child: TextFormField(
                             onChanged: (val) => context
-                                .read<PhoneAuthCubit>()
+                                .read<AuthCubit>()
                                 .phoneNumberChanged(val),
                             style: TextStyle(height: 1.6),
                             keyboardType: TextInputType.phone,
@@ -101,7 +100,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                           minWidth: double.infinity,
                           height: 50,
                           onPressed: () {
-                            context.read<PhoneAuthCubit>().verifyPhoneNumber();
+                            context.read<AuthCubit>().verifyPhoneNumber();
                           },
                           child: Text(
                             "Continue",
@@ -111,7 +110,53 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           color: Color(0xffFBD737),
-                        )
+                        ),
+                        const SizedBox(height: 30),
+                        InkWell(
+                          onTap: () {
+                            context.read<AuthCubit>().loginWithGoogleAcc();
+                          },
+                          child: Material(
+                            borderRadius: BorderRadius.circular(9),
+                            child: Container(
+                              height: 57,
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color.fromRGBO(185, 182, 182, 0.5),
+                                    offset: Offset(0, 2),
+                                    blurRadius: 72,
+                                  )
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Spacer(),
+                                  Image.asset(
+                                    "assets/images/google_logo.png",
+                                    height: 29,
+                                    width: 29,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Continue with google",
+                                    style: TextStyle(
+                                      color: Color(0xff777777),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

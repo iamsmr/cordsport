@@ -1,4 +1,4 @@
-import 'package:codespot/screens/Authentication/cubit/phoneauth_cubit.dart';
+import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pin_put/pin_put.dart';
@@ -45,7 +45,7 @@ class _VerificationPageState extends State<VerificationPage> {
                     animationDuration: Duration(seconds: 0),
                     checkClipboard: true,
                     onChanged: (val) {
-                      context.read<PhoneAuthCubit>().smsCodeChanged(val);
+                      context.read<AuthCubit>().smsCodeChanged(val);
                     },
                     fieldsCount: 4,
                     withCursor: true,
@@ -65,7 +65,7 @@ class _VerificationPageState extends State<VerificationPage> {
                   minWidth: 200,
                   height: 50,
                   onPressed: () {
-                    context.read<PhoneAuthCubit>().signInWithPhoneNumber();
+                    context.read<AuthCubit>().signInWithPhoneNumber();
                   },
                   child: Text(
                     "Verify",
