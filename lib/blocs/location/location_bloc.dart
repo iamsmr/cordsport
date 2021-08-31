@@ -48,9 +48,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     );
   }
 
-  Stream<LocationState> _mapLocationStreamToState(location) async* {
+  Stream<LocationState> _mapLocationStreamToState(LocationEventUpdateLocation location) async* {
     yield state.copyWith(
-      location: location,
+      location: location.userLocation,
       status: LocationStatus.success,
     );
   }
