@@ -3,6 +3,7 @@
    <application
         android:label="codespot"
         android:icon="@mipmap/ic_launcher">
+         
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -37,5 +38,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyB3YQPcoRh2WJOuXB_N6KFnaCU-9UowRuk"/>
     </application>
 </manifest>

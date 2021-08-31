@@ -27,7 +27,7 @@ class LocationReository extends BaseLocationRepository {
         return _location.onLocationChanged.map(
           (locationData) => UserLocation(
             latitude: locationData.latitude!,
-            longitude: locationData.latitude!,
+            longitude: locationData.longitude!,
           ),
         );
       },

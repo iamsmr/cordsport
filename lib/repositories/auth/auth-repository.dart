@@ -46,11 +46,10 @@ class AuthRepository extends BaseAuthRepository {
       final userCred = await _firebaseAuth.signInWithCredential(credential);
       final user = userCred.user;
       await _firebaseFirestore.collection(Paths.users).add({
-        "codeName":"",
-        "uid":user?.uid,
-        "phoneNumber":user?.phoneNumber,
-        "cordinates":GeoPoint(554,445)
-
+        "codeName": "",
+        "uid": user?.uid,
+        "phoneNumber": user?.phoneNumber,
+        "cordinates": GeoPoint(554, 445)
       });
       return userCred.user;
     } on auth.FirebaseAuthException catch (e) {
@@ -86,6 +85,7 @@ class AuthRepository extends BaseAuthRepository {
 
   @override
   Future<void> logout() async {
+    await _googleSignIn.signOut();
     await _firebaseAuth.signOut();
   }
 }

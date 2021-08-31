@@ -1,22 +1,97 @@
+import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/blocs/location/location_bloc.dart';
+import 'package:codespot/repositories/location/location-repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late GoogleMapController _googleMapController;
+  final double zoomLevel = 10;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((_) {
+      context.read<LocationBloc>().add(LocationEventGetLocation());
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LocationBloc, LocationState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("Home page"),
-                Text("Lat: ${state.location.latitude}"),
-                Text("long: ${state.location.longitude}"),
+        final latLan =
+            LatLng(state.location.latitude, state.location.longitude);
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.notes_outlined),
+                onPressed: () {},
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () =>
+                      context.read<AuthBloc>().add(AuthLogoutRequested()),
+                  icon: Icon(Icons.exit_to_app_outlined),
+                )
+              ],
+              title: Text("CORDSPOT"),
+            ),
+            body: GoogleMap(
+              zoomControlsEnabled: true,
+              myLocationButtonEnabled: true,
+              zoomGesturesEnabled: true,
+
+              onCameraMove: (CameraPosition position) {},
+              onMapCreated: (controller) {
+                _googleMapController = controller;
+              },
+
+              myLocationEnabled: true,
+              mapType: MapType.normal,
+              circles: Set.from([
+                Circle(
+                  circleId: CircleId("1km radius circle"),
+                  center: latLan,
+                  radius: 1000,
+                  fillColor: Colors.blue.withOpacity(.3),
+                  strokeWidth: 2,
+                  strokeColor: const Color(0xff4361FF),
+                )
+              ]),
+              // onCameraMoveStarted: () {
+              //   _googleMapController.moveCamera(
+              //     CameraUpdate.newCameraPosition(
+              //       CameraPosition(target: latLan, zoom: zoomLevel),
+              //     ),
+              //   );
+              // },
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                  context.read<LocationBloc>().state.location.latitude,
+                  context.read<LocationBloc>().state.location.longitude,
+                ),
+                zoom: 11,
+              ),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: Color(0xffFBD737),
+              items: [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
+                BottomNavigationBarItem(icon: Icon(Icons.chat), label: ""),
+                BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
               ],
             ),
           ),
