@@ -2,7 +2,6 @@ import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pin_put/pin_put.dart';
-
 class VerificationPage extends StatefulWidget {
   static const String routeName = "/phoneVerification";
   static Route route() =>

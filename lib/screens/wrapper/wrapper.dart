@@ -7,7 +7,11 @@ import 'package:codespot/screens/home/home-page.dart';
 
 class Wrapper extends StatelessWidget {
   static const String routeName = "/wrapper";
-  static Route route() => MaterialPageRoute(builder: (_) => Wrapper());
+  static Route route() => PageRouteBuilder(
+        settings: const RouteSettings(name: routeName),
+        transitionDuration: const Duration(seconds: 0),
+        pageBuilder: (_, __, ___) => Wrapper(),
+      );
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
