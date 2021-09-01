@@ -41,6 +41,17 @@ class User extends Equatable {
     };
   }
 
+  factory User.empty() {
+    return User(
+      codeName: "",
+      cordinates: LatLng(0, 0),
+      email: "",
+      phoneNumber: "",
+      profileUrl: "",
+      uid: "",
+    );
+  }
+
   factory User.fromDocument(DocumentSnapshot snap) {
     final data = snap.data() as Map;
     return User(
