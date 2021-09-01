@@ -1,4 +1,5 @@
 import 'package:codespot/blocs/location/location_bloc.dart';
+import 'package:codespot/blocs/user/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<LocationReository>(
           create: (_) => LocationReository(),
         ),
+        RepositoryProvider<UserRepository>(create: (_) => UserRepository())
       ],
       child: MultiBlocProvider(
         providers: [
@@ -43,6 +45,12 @@ class MyApp extends StatelessWidget {
             create: (context) => LocationBloc(
               authBloc: context.read<AuthBloc>(),
               locationReository: context.read<LocationReository>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => UserBloc(
+              locationBloc: context.read<LocationBloc>(),
+              userRepository: context.read<UserRepository>(),
             ),
           )
         ],

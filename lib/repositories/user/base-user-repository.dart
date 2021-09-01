@@ -1,10 +1,10 @@
 import 'package:codespot/models/models.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 abstract class BaseUserRepository {
   Future<User> getUserWithID({required String id});
   Stream<List<User>> getUserWithInRadius({
-    required GeoFirePoint center,
+    required LatLng center,
     required double radius,
   });
 }

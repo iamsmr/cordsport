@@ -3,6 +3,7 @@ import 'package:codespot/config/paths.dart';
 import 'package:codespot/models/user.dart';
 import 'package:codespot/repositories/user/base-user-repository.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class UserRepository extends BaseUserRepository {
   final FirebaseFirestore _firebaseFirestore;
@@ -22,19 +23,23 @@ class UserRepository extends BaseUserRepository {
   }
 
   @override
-  Stream<List<User>> getUserWithInRadius ({
+  Stream<List<User>> getUserWithInRadius({
     required double radius,
-    required GeoFirePoint center,
+    required LatLng center,
   }) {
     CollectionReference _collectionRef =
         _firebaseFirestore.collection(Paths.users);
     return _geoflutterfire
         .collection(collectionRef: _collectionRef)
         .within(
-          center: center,
-          radius: 1,
-          field: "position",
+          center: _latLangToGeoFirePoint(center),
+          radius: radius,
+          field: "cordinates",
         )
         .map((users) => users.map((user) => User.fromDocument(user)).toList());
+  }
+
+  GeoFirePoint _latLangToGeoFirePoint(LatLng latLng) {
+    return GeoFirePoint(latLng.latitude, latLng.longitude);
   }
 }
