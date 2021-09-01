@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => LocationBloc(
+              authBloc: context.read<AuthBloc>(),
               locationReository: context.read<LocationReository>(),
             ),
           )

@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late GoogleMapController _googleMapController;
-  final double zoomLevel = 10;
+  final double zoomLevel = 11;
 
   @override
   void initState() {
@@ -55,11 +55,11 @@ class _HomePageState extends State<HomePage> {
                 )
               ]),
               initialCameraPosition: CameraPosition(
+                zoom: 15,
                 target: LatLng(
                   context.read<LocationBloc>().state.location.latitude,
                   context.read<LocationBloc>().state.location.longitude,
                 ),
-                zoom: 11,
               ),
             ),
           ),
