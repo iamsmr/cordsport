@@ -10,7 +10,7 @@ abstract class LocationEvent extends Equatable {
 class LocationEventGetLocation extends LocationEvent {}
 
 class LocationEventUpdateLocation extends LocationEvent {
-  final UserLocation? userLocation;
+  final LatLng? userLocation;
   const LocationEventUpdateLocation({this.userLocation});
 
   @override

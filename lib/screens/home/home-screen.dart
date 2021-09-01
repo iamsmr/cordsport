@@ -1,6 +1,4 @@
-import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/blocs/location/location_bloc.dart';
-import 'package:codespot/repositories/location/location-repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -27,8 +25,6 @@ class _HomePageState extends State<HomePage> {
     return BlocConsumer<LocationBloc, LocationState>(
       listener: (context, state) {},
       builder: (context, state) {
-        final latLan =
-            LatLng(state.location.latitude, state.location.longitude);
         return WillPopScope(
           onWillPop: () async => false,
           child: Scaffold(
@@ -47,7 +43,7 @@ class _HomePageState extends State<HomePage> {
               circles: Set.from([
                 Circle(
                   circleId: CircleId("1km radius circle"),
-                  center: latLan,
+                  center: state.location,
                   radius: 1000,
                   fillColor: Colors.blue.withOpacity(.3),
                   strokeWidth: 2,
