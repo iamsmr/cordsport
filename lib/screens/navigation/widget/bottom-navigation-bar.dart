@@ -19,6 +19,7 @@ class BottomNavBar extends StatelessWidget {
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
       showSelectedLabels: false,
+      currentIndex: items.keys.toList().indexOf(selectedItem),
       showUnselectedLabels: false,
       selectedItemColor: const Color(0xffFBD737),
       items: items

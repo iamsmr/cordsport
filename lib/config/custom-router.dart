@@ -19,6 +19,14 @@ class CustomRouter {
     }
   }
 
+  static Route onGenerateNestedRoute(RouteSettings routeSettings) {
+    print("Nested Route: ${routeSettings.name}");
+    switch (routeSettings.name) {
+      default:
+        return _errorRoute();
+    }
+  }
+
   static MaterialPageRoute _errorRoute() {
     return MaterialPageRoute(
       builder: (_) => Scaffold(

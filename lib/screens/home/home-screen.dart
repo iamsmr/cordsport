@@ -32,30 +32,16 @@ class _HomePageState extends State<HomePage> {
         return WillPopScope(
           onWillPop: () async => false,
           child: Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(Icons.notes_outlined),
-                onPressed: () {},
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () =>
-                      context.read<AuthBloc>().add(AuthLogoutRequested()),
-                  icon: Icon(Icons.exit_to_app_outlined),
-                )
-              ],
-              title: Text("CORDSPOT"),
-            ),
             body: GoogleMap(
               zoomControlsEnabled: true,
               myLocationButtonEnabled: true,
               zoomGesturesEnabled: true,
-
               onCameraMove: (CameraPosition position) {},
               onMapCreated: (controller) {
-                _googleMapController = controller;
+                setState(() {
+                  _googleMapController = controller;
+                });
               },
-
               myLocationEnabled: true,
               mapType: MapType.normal,
               circles: Set.from([
@@ -68,13 +54,6 @@ class _HomePageState extends State<HomePage> {
                   strokeColor: const Color(0xff4361FF),
                 )
               ]),
-              // onCameraMoveStarted: () {
-              //   _googleMapController.moveCamera(
-              //     CameraUpdate.newCameraPosition(
-              //       CameraPosition(target: latLan, zoom: zoomLevel),
-              //     ),
-              //   );
-              // },
               initialCameraPosition: CameraPosition(
                 target: LatLng(
                   context.read<LocationBloc>().state.location.latitude,
@@ -82,17 +61,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 zoom: 11,
               ),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: Color(0xffFBD737),
-              items: [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-                BottomNavigationBarItem(icon: Icon(Icons.chat), label: ""),
-                BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
-              ],
             ),
           ),
         );
