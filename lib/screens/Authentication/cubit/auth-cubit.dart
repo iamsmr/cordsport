@@ -26,6 +26,8 @@ class AuthCubit extends Cubit<AuthCubitState> {
     );
   }
 
+  // make it better
+
   void smsCodeChanged(String smsCode) {
     emit(state.copyWith(status: PhoneAuthStatus.initial, smsCode: smsCode));
   }
@@ -81,6 +83,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
     emit(state.copyWith(status: PhoneAuthStatus.loading));
     try {
       await _authRepository.loginWithGoogleAccount();
+      emit(state.copyWith(status: PhoneAuthStatus.success));
     } on Failure catch (e) {
       emit(state.copyWith(failure: e, status: PhoneAuthStatus.error));
     }

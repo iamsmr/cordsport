@@ -14,13 +14,15 @@ import 'package:codespot/config/custom-router.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = SimpleBlocObserver();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+  await Firebase.initializeApp( );
+  runApp(MyApp()); 
 }
+
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print("Hello world");
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(create: (_) => AuthRepository()),

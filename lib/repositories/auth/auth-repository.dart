@@ -85,6 +85,8 @@ class AuthRepository extends BaseAuthRepository {
       throw Failure(code: e.code, message: e.message ?? "");
     } on PlatformException catch (e) {
       throw Failure(code: e.code, message: e.message ?? "");
+    } catch (e) {
+      print(e);
     }
   }
 

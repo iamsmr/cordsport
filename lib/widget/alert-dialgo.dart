@@ -13,7 +13,10 @@ class CustomErrorDialgo extends StatelessWidget {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Text(title),
-      content: Text(content),
+      content: Container(
+        constraints: BoxConstraints(maxWidth: 500),
+        child: Text(content),
+      ),
       actions: [
         MaterialButton(
           minWidth: double.infinity,
