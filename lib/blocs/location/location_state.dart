@@ -3,7 +3,7 @@ part of 'location_bloc.dart';
 enum LocationStatus { unkown, success, error }
 
 class LocationState extends Equatable {
-  final UserLocation location;
+  final LatLng location;
   final LocationStatus status;
   final Failure failure;
   const LocationState({
@@ -14,7 +14,7 @@ class LocationState extends Equatable {
 
   static LocationState initial() {
     return LocationState(
-      location: UserLocation(latitude: 0, longitude: 0),
+      location: LatLng(0, 0),
       status: LocationStatus.unkown,
       failure: Failure(),
     );
@@ -24,7 +24,7 @@ class LocationState extends Equatable {
   List<Object> get props => [location, status, failure];
 
   LocationState copyWith({
-    UserLocation? location,
+    LatLng? location,
     LocationStatus? status,
     Failure? failure,
   }) {

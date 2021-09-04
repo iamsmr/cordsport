@@ -1,2 +1,2 @@
 export 'failure.dart';
-export 'user-location.dart';
+export 'user.dart';

@@ -19,19 +19,6 @@ class AuthRepository extends BaseAuthRepository {
         _firebaseAuth = firebaseAuth ?? auth.FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn();
 
-  // @override
-  // Future<String> verifyPhoneNumber({
-  //   required String phoneNumber,
-  // }) async {
-  //   try {
-
-  //   } on auth.FirebaseAuthException catch (err) {
-  //     throw Failure(code: err.code, message: err.message ?? "");
-  //   } on PlatformException catch (err) {
-  //     throw Failure(code: err.code, message: err.message ?? "");
-  //   }
-  // }
-
   @override
   Future<auth.User?> continueWithPhone({
     required String verificationId,
@@ -45,11 +32,13 @@ class AuthRepository extends BaseAuthRepository {
 
       final userCred = await _firebaseAuth.signInWithCredential(credential);
       final user = userCred.user;
-      await _firebaseFirestore.collection(Paths.users).add({
+      await _firebaseFirestore.collection(Paths.users).doc(user?.uid).set({
         "codeName": "",
         "uid": user?.uid,
         "phoneNumber": user?.phoneNumber,
-        "cordinates": GeoPoint(554, 445)
+        "cordinates": GeoPoint(0, 0),
+        "email": "",
+        "profileUrl": ""
       });
       return userCred.user;
     } on auth.FirebaseAuthException catch (e) {
@@ -74,6 +63,22 @@ class AuthRepository extends BaseAuthRepository {
 
       final authResult = await _firebaseAuth.signInWithCredential(credential);
       final user = authResult.user;
+
+      final userDocRef =
+          _firebaseFirestore.collection(Paths.users).doc(user?.uid);
+
+      userDocRef.get().then((value) {
+        if (!value.exists) {
+          userDocRef.set({
+            "codeName": "",
+            "uid": user?.uid,
+            "phoneNumber": user?.phoneNumber,
+            "cordinates": GeoPoint(0, 0),
+            "email": user?.email,
+            "profileUrl": user?.photoURL
+          });
+        }
+      });
 
       return user;
     } on auth.FirebaseAuthException catch (e) {

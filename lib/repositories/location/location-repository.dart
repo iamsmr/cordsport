@@ -1,5 +1,6 @@
 import 'package:codespot/models/models.dart';
 import 'package:codespot/repositories/location/base-location-repository.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class LocationReository extends BaseLocationRepository {
@@ -8,12 +9,12 @@ class LocationReository extends BaseLocationRepository {
   LocationReository({Location? location}) : _location = location ?? Location();
 
   @override
-  Future<UserLocation> getLocation() async {
+  Future<LatLng> getLocation() async {
     try {
       final locationData = await _location.getLocation();
-      return UserLocation(
-        latitude: locationData.latitude!,
-        longitude: locationData.longitude!,
+      return LatLng(
+        locationData.latitude!,
+        locationData.longitude!,
       );
     } catch (e) {
       throw Failure(message: e.toString());
@@ -21,13 +22,13 @@ class LocationReository extends BaseLocationRepository {
   }
 
   @override
-  Stream<UserLocation> locationChange() async* {
+  Stream<LatLng> locationChange() async* {
     yield* await _location.requestPermission().then(
       (value) {
         return _location.onLocationChanged.map(
-          (locationData) => UserLocation(
-            latitude: locationData.latitude!,
-            longitude: locationData.longitude!,
+          (locationData) => LatLng(
+            locationData.latitude!,
+             locationData.longitude!,
           ),
         );
       },
