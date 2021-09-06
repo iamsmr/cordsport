@@ -21,7 +21,8 @@ class UserRepository extends BaseUserRepository {
         await _firebaseFirestore.collection(Paths.users).doc(id).get();
     return docSnap.exists ? User.fromDocument(docSnap) : User.empty();
   }
-  /// rturn [users] within only 1km radiius  
+
+  /// rturn [users] within only 1km radiius
 
   @override
   Stream<List<User>> getUserWithInRadius({
@@ -67,5 +68,13 @@ class UserRepository extends BaseUserRepository {
     await _firebaseFirestore.collection(Paths.users).doc(id).update({
       "cordinates": cordinates,
     });
+  }
+
+  @override
+  Future<void> updateCodeName(
+      {required String codeName, required String id}) async {
+    await _firebaseFirestore.collection(Paths.users).doc(id).update(
+      {"codeName": codeName},
+    );
   }
 }

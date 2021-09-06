@@ -12,4 +12,5 @@ abstract class BaseUserRepository {
     required LatLng center,
     required double radius,
   });
+  Future<void> updateCodeName({required String codeName,required String id});
 }

@@ -29,5 +29,10 @@ class UserUpdateCordinates extends UserEvent {
   final String? id;
   const UserUpdateCordinates({required this.latLng, this.id});
   @override
-  List<Object?> get props => [latLng,id];
+  List<Object?> get props => [latLng, id];
+}
+
+class UserUpdateCodeName extends UserEvent {
+  final String codeName;
+  const UserUpdateCodeName({required this.codeName});
 }

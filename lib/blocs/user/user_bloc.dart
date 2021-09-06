@@ -39,6 +39,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield* _mapUpdateCordinatesEventToState(event);
     } else if (event is UserUpdateUser) {
       yield* _mapUpdateUserEventToState(event);
+    } else if (event is UserUpdateCodeName) {
+      yield* _mapUpdateCodeNameToState(event);
     }
   }
 
@@ -51,7 +53,18 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     final user = await _userRepository.getUserWithID(
       id: event.id ?? _authBloc.state.user!.uid,
     );
-    yield state.copyWith(user: user,status: UserStatus.success);
+    yield state.copyWith(user: user, status: UserStatus.success);
+  }
+
+  Stream<UserState> _mapUpdateCodeNameToState(UserUpdateCodeName event) async* {
+    await _userRepository.updateCodeName(
+      codeName: event.codeName,
+      id: _authBloc.state.user!.uid,
+    );
+
+    add(UserGetUserWitId());
+
+    yield state.copyWith();
   }
 
   Stream<UserState> _mapUpdateCordinatesEventToState(
