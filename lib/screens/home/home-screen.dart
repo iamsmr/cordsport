@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late GoogleMapController _googleMapController;
+  GoogleMapController? _googleMapController;
   final double zoomLevel = 11;
 
   @override
@@ -32,11 +32,21 @@ class _HomePageState extends State<HomePage> {
             .read<UserRepository>()
             .getUserWithInRadius(
               radius: 10,
-              center: locationState.location ?? LatLng(0, 0),
+              center: locationState.location!,
             )
             .listen((users) {
           context.read<UserBloc>().add(UserUpdateUser(users: users));
         });
+        if (_googleMapController != null) {
+          _googleMapController!.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                zoom: 15,
+                target: locationState.location!,
+              ),
+            ),
+          );
+        }
       },
       builder: (context, locationState) {
         if (locationState.location != null) {
@@ -47,18 +57,15 @@ class _HomePageState extends State<HomePage> {
                 onWillPop: () async => false,
                 child: Scaffold(
                   body: GoogleMap(
+                    onCameraMoveStarted: () {
+                      print("camre move");
+                    },
                     zoomControlsEnabled: true,
                     myLocationButtonEnabled: true,
                     zoomGesturesEnabled: true,
                     onMapCreated: (controller) {
                       setState(() {
                         _googleMapController = controller;
-                      });
-                    },
-                    onCameraMove: (position) {
-                      setState(() {
-                        _googleMapController.moveCamera(
-                            CameraUpdate.newCameraPosition(position));
                       });
                     },
                     myLocationEnabled: true,
