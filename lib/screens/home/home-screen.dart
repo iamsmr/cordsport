@@ -70,17 +70,17 @@ class _HomePageState extends State<HomePage> {
                     },
                     myLocationEnabled: true,
                     markers: Set.from(
-                      userState.users.map((user) {
-                        Marker(
-                          position: user.cordinates,
-                          icon: BitmapDescriptor.defaultMarkerWithHue(
-                            BitmapDescriptor.hueBlue,
+                      userState.users.map(
+                        (e) => Marker(
+                          markerId: MarkerId(e.uid),
+                          position: e.cordinates,
+                          infoWindow: InfoWindow(
+                            title: e.codeName
                           ),
-                          markerId: MarkerId(user.uid),
-                        );
-                      }),
+                        ),
+                      ),
                     ),
-                    mapType: MapType.normal,
+                    mapType: MapType.terrain,
                     circles: Set.from([
                       Circle(
                         circleId: CircleId("1km radius circle"),

@@ -21,6 +21,7 @@ class UserRepository extends BaseUserRepository {
         await _firebaseFirestore.collection(Paths.users).doc(id).get();
     return docSnap.exists ? User.fromDocument(docSnap) : User.empty();
   }
+  /// rturn [users] within only 1km radiius  
 
   @override
   Stream<List<User>> getUserWithInRadius({
@@ -29,22 +30,29 @@ class UserRepository extends BaseUserRepository {
   }) {
     CollectionReference _collectionRef =
         _firebaseFirestore.collection(Paths.users);
-    final users = _geoflutterfire
-        .collection(collectionRef: _collectionRef)
-        .within(
-          center: _latLangToGeoFirePoint(center),
-          radius: radius,
-          field: "cordinates",
-        )
-        .map(
-          (users) => users.map(
-            (user) {
-              print("This Is Users");
-              return User.fromDocument(user);
-            },
-          ).toList(),
-        );
-    return users;
+    final allUsers = _collectionRef.snapshots().map((users) =>
+        _distanceQuery(users.docs, center)
+            .map((user) => User.fromDocument(user))
+            .toList());
+    return allUsers;
+  }
+
+  List<QueryDocumentSnapshot<Object?>> _distanceQuery(
+      List<QueryDocumentSnapshot<Object?>> users, LatLng center) {
+    List<QueryDocumentSnapshot<Object?>> _newUsers = [];
+    for (int i = 0; i < users.length; i++) {
+      final point = _latLangToGeoFirePoint(center);
+      final data = users[i].data() as Map<String, dynamic>;
+      final cordinats = data["cordinates"];
+      final latitude = cordinats.latitude;
+      final longitude = cordinats.longitude;
+      final distacne = point.distance(lat: latitude, lng: longitude);
+      if (distacne <= 1000) {
+        _newUsers.add(users[i]);
+      }
+    }
+
+    return _newUsers;
   }
 
   GeoFirePoint _latLangToGeoFirePoint(LatLng latLng) {
