@@ -29,17 +29,35 @@ class UserRepository extends BaseUserRepository {
   }) {
     CollectionReference _collectionRef =
         _firebaseFirestore.collection(Paths.users);
-    return _geoflutterfire
+    final users = _geoflutterfire
         .collection(collectionRef: _collectionRef)
         .within(
           center: _latLangToGeoFirePoint(center),
           radius: radius,
           field: "cordinates",
         )
-        .map((users) => users.map((user) => User.fromDocument(user)).toList());
+        .map(
+          (users) => users.map(
+            (user) {
+              print("This Is Users");
+              return User.fromDocument(user);
+            },
+          ).toList(),
+        );
+    return users;
   }
 
   GeoFirePoint _latLangToGeoFirePoint(LatLng latLng) {
     return GeoFirePoint(latLng.latitude, latLng.longitude);
+  }
+
+  @override
+  Future<void> updateCordinates({
+    required String id,
+    required GeoPoint cordinates,
+  }) async {
+    await _firebaseFirestore.collection(Paths.users).doc(id).update({
+      "cordinates": cordinates,
+    });
   }
 }

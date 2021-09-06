@@ -9,28 +9,29 @@ class LocationReository extends BaseLocationRepository {
   LocationReository({Location? location}) : _location = location ?? Location();
 
   @override
-  Future<LatLng> getLocation() async {
+  Future<LatLng?> getLocation() async {
     try {
       final locationData = await _location.getLocation();
-      return LatLng(
-        locationData.latitude!,
-        locationData.longitude!,
-      );
+      if (locationData.latitude != null && locationData.longitude != null) {
+        return LatLng(locationData.latitude!, locationData.longitude!);
+      }
     } catch (e) {
       throw Failure(message: e.toString());
     }
   }
 
   @override
-  Stream<LatLng> locationChange() async* {
+  Stream<LatLng?> locationChange() async* {
     yield* await _location.requestPermission().then(
       (value) {
-        return _location.onLocationChanged.map(
-          (locationData) => LatLng(
-            locationData.latitude!,
-             locationData.longitude!,
-          ),
-        );
+        return _location.onLocationChanged.map((LocationData locationData) {
+          if (locationData.latitude != null && locationData.longitude != null) {
+            return LatLng(
+              locationData.latitude!,
+              locationData.longitude!,
+            );
+          }
+        });
       },
     );
   }

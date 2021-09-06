@@ -1,8 +1,10 @@
+
 import 'package:bloc/bloc.dart';
 import 'package:codespot/models/failure.dart';
 import 'package:codespot/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/foundation.dart';
 
 part 'phoneauth_state.dart';
 
@@ -20,7 +22,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
   void phoneNumberChanged(String phoneNumber) {
     emit(
       state.copyWith(
-        status: PhoneAuthStatus.initial,
+        status: AuthCubitStatus.initial,
         phoneNumber: phoneNumber,
       ),
     );
@@ -29,63 +31,96 @@ class AuthCubit extends Cubit<AuthCubitState> {
   // make it better
 
   void smsCodeChanged(String smsCode) {
-    emit(state.copyWith(status: PhoneAuthStatus.initial, smsCode: smsCode));
+    emit(state.copyWith(status: AuthCubitStatus.initial, smsCode: smsCode));
   }
 
   void verifyPhoneNumber() async {
-    if (!state.isValid && state.status == PhoneAuthStatus.loading) return;
-    emit(state.copyWith(status: PhoneAuthStatus.loading));
-
-    // TODO: later implement in better way
-
-    await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: state.phoneNumber,
-      verificationCompleted: (credential) async {
-        await _firebaseAuth.signInWithCredential(credential);
-      },
-      verificationFailed: (e) {
-        emit(state.copyWith(
-          failure: Failure(message: e.message, code: e.code),
-          status: PhoneAuthStatus.error,
-        ));
-      },
-      timeout: const Duration(seconds: 60),
-      codeSent: (String vId, int? resendToken) async {
-        emit(
-          state.copyWith(
-            verificationNumber: vId,
-            status: PhoneAuthStatus.goToVerification,
-          ),
+    if (!state.isValid && state.status == AuthCubitStatus.loading) return;
+    emit(state.copyWith(status: AuthCubitStatus.loading));
+    String phoneNumber = state.phoneNumber;
+    Duration timeOut = const Duration(seconds: 0);
+    final verificationFailed = (exp) {
+      emit(
+        state.copyWith(
+          status: AuthCubitStatus.error,
+          failure: Failure(message: exp.message),
+        ),
+      );
+    };
+    final authCompleted = (authCredential) async {
+      await _firebaseAuth.signInWithCredential(authCredential);
+    };
+    final codeSend = (String verificationId, int? resendToekn) {
+      emit(
+        state.copyWith(
+          verificationNumber: verificationId,
+          resendToekn: resendToekn,
+          status: AuthCubitStatus.goToVerification,
+        ),
+      );
+    };
+    try {
+      if (kIsWeb) {
+        final confirmationResult = await _authRepository.phoneVerificationWeb(
+          phoneNumber: phoneNumber,
+          // recaptchaVerifier: auth.RecaptchaVerifier(
+          //   container: 'recaptcha',
+          //   size: auth.RecaptchaVerifierSize.compact,
+          //   theme: auth.RecaptchaVerifierTheme.dark,
+          // ),
         );
-      },
-      codeAutoRetrievalTimeout: (String vId) {},
-    );
+        emit(state.copyWith(
+          confirmationResult: confirmationResult,
+          status: AuthCubitStatus.initial,
+        ));
+      } else {
+        await _authRepository.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          timeOut: timeOut,
+          phoneVerificationFailed: verificationFailed,
+          phoneVerificationCompleted: authCompleted,
+          phoneCodeSent: codeSend,
+          autoRetrievalTimeout: (val) {},
+        );
+      }
+
+      emit(state.copyWith(status: AuthCubitStatus.goToVerification));
+    } on Failure catch (e) {
+      emit(state.copyWith(failure: e, status: AuthCubitStatus.error));
+    }
   }
 
   void signInWithPhoneNumber() async {
-    if (state.smsCode == null && state.status == PhoneAuthStatus.loading)
+    if (state.smsCode == null && state.status == AuthCubitStatus.loading)
       return;
-    emit(state.copyWith(status: PhoneAuthStatus.loading));
+    emit(state.copyWith(status: AuthCubitStatus.loading));
 
     try {
-      await _authRepository.continueWithPhone(
-        verificationId: state.verificationNumber,
-        smsCode: state.smsCode!,
-      );
-      emit(state.copyWith(status: PhoneAuthStatus.success));
-    } on Failure catch (e) {
-      emit(state.copyWith(failure: e, status: PhoneAuthStatus.error));
+      if (kIsWeb) {
+        await _authRepository.signInWithPhoneWeb(
+          smsCode: state.smsCode!,
+          confirmationResult: state.confirmationResult!,
+        );
+      } else {
+        await _authRepository.signInWithPhone(
+          verificationId: state.verificationNumber,
+          smsCode: state.smsCode!,
+        );
+      }
+      emit(state.copyWith(status: AuthCubitStatus.success));
+    } on Failure catch (err) {
+      emit(state.copyWith(failure: err, status: AuthCubitStatus.error));
     }
   }
 
   void loginWithGoogleAcc() async {
-    if (!state.isValid && state.status == PhoneAuthStatus.loading) return;
-    emit(state.copyWith(status: PhoneAuthStatus.loading));
+    if (!state.isValid && state.status == AuthCubitStatus.loading) return;
+    emit(state.copyWith(status: AuthCubitStatus.loading));
     try {
       await _authRepository.loginWithGoogleAccount();
-      emit(state.copyWith(status: PhoneAuthStatus.success));
+      emit(state.copyWith(status: AuthCubitStatus.success));
     } on Failure catch (e) {
-      emit(state.copyWith(failure: e, status: PhoneAuthStatus.error));
+      emit(state.copyWith(failure: e, status: AuthCubitStatus.error));
     }
   }
 }

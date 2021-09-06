@@ -1,13 +1,15 @@
 part of 'auth-cubit.dart';
 
-enum PhoneAuthStatus { initial, loading, goToVerification, error, success }
+enum AuthCubitStatus { initial, loading, goToVerification, error, success }
 
 class AuthCubitState extends Equatable {
   final String phoneNumber;
   final String verificationNumber;
   final String? smsCode;
   final Failure failure;
-  final PhoneAuthStatus status;
+  final AuthCubitStatus status;
+  final int? resendToekn;
+  final auth.ConfirmationResult? confirmationResult;
 
   const AuthCubitState({
     required this.phoneNumber,
@@ -15,6 +17,8 @@ class AuthCubitState extends Equatable {
     required this.smsCode,
     required this.failure,
     required this.status,
+    required this.resendToekn,
+    required this.confirmationResult,
   });
 
   bool get isValid => phoneNumber.isNotEmpty && phoneNumber.length > 9;
@@ -25,7 +29,9 @@ class AuthCubitState extends Equatable {
       verificationNumber: "",
       smsCode: "",
       failure: Failure(),
-      status: PhoneAuthStatus.initial,
+      confirmationResult: null,
+      resendToekn: null,
+      status: AuthCubitStatus.initial,
     );
   }
 
@@ -37,6 +43,8 @@ class AuthCubitState extends Equatable {
       smsCode,
       failure,
       status,
+      resendToekn,
+      confirmationResult,
     ];
   }
 
@@ -45,14 +53,19 @@ class AuthCubitState extends Equatable {
     String? verificationNumber,
     String? smsCode,
     Failure? failure,
-    PhoneAuthStatus? status,
+    AuthCubitStatus? status,
+    int? resendToekn,
+    auth.ConfirmationResult? confirmationResult,
   }) {
     return AuthCubitState(
+      confirmationResult: confirmationResult ?? this.confirmationResult,
+      resendToekn: resendToekn ?? this.resendToekn,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       verificationNumber: verificationNumber ?? this.verificationNumber,
       smsCode: smsCode ?? this.smsCode,
       failure: failure ?? this.failure,
       status: status ?? this.status,
     );
+    
   }
 }

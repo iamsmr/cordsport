@@ -14,6 +14,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  void didChangeDependencies() {
+    precacheImage(AssetImage("assets/images/google_logo.png"), context);
+    precacheImage(AssetImage("assets/images/Logo.png"), context);
+    super.didChangeDependencies();
+  }
+
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthCubit, AuthCubitState>(
           listener: (context, state) {
             print(state);
-            if (state.status == PhoneAuthStatus.error) {
+            if (state.status == AuthCubitStatus.error) {
               showDialog(
                 context: context,
                 builder: (context) {
@@ -34,8 +40,8 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 },
               );
-            } else if (state.status == PhoneAuthStatus.goToVerification &&
-                state.smsCode == null) {
+            } else if (state.status == AuthCubitStatus.goToVerification &&
+                state.smsCode == "") {
               Navigator.pushNamed(context, VerificationPage.routeName);
             }
           },
@@ -193,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        if (state.status == PhoneAuthStatus.loading)
+                        if (state.status == AuthCubitStatus.loading)
                           linearProgressLoading(),
                       ],
                     ),

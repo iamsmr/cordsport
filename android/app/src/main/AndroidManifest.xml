@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cordspot.sameer">
+    <!-- <application android:allowBackup="false"> -->
+
    <application
         android:label="codespot"
         android:icon="@mipmap/ic_launcher">

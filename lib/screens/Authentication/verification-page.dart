@@ -2,6 +2,7 @@ import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+
 class VerificationPage extends StatefulWidget {
   static const String routeName = "/phoneVerification";
   static Route route() =>
@@ -39,20 +40,20 @@ class _VerificationPageState extends State<VerificationPage> {
                 ),
                 SizedBox(height: 40),
                 Container(
-                  constraints: BoxConstraints(maxWidth: 300),
+                  constraints: BoxConstraints(maxWidth: 500),
                   child: PinPut(
                     animationDuration: Duration(seconds: 0),
                     checkClipboard: true,
                     onChanged: (val) {
                       context.read<AuthCubit>().smsCodeChanged(val);
                     },
-                    fieldsCount: 4,
+                    fieldsCount: 6,
                     withCursor: true,
                     textStyle: const TextStyle(
                       fontSize: 25.0,
                       color: Colors.black,
                     ),
-                    eachFieldWidth: 55.0,
+                    eachFieldWidth: 45.0,
                     eachFieldHeight: 55.0,
                     submittedFieldDecoration: pinPutDecoration,
                     selectedFieldDecoration: pinPutDecoration,

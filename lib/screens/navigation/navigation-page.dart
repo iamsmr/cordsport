@@ -2,6 +2,7 @@ import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/enums/enums.dart';
 import 'package:codespot/screens/navigation/cubit/bottom_nav_bar_cubit.dart';
 import 'package:codespot/screens/navigation/widget/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -60,18 +61,20 @@ class NavScreen extends StatelessWidget {
                   .values
                   .toList(),
             ),
-            bottomNavigationBar: BottomNavBar(
-              items: _items,
-              selectedItem: state.selctedItem,
-              onTap: (int index) {
-                final selectedItem = _items.keys.toList()[index];
-                _selectBottomNavItem(
-                  context,
-                  selectedItem,
-                  selectedItem == state.selctedItem,
-                );
-              },
-            ),
+            bottomNavigationBar: !kIsWeb
+                ? BottomNavBar(
+                    items: _items,
+                    selectedItem: state.selctedItem,
+                    onTap: (int index) {
+                      final selectedItem = _items.keys.toList()[index];
+                      _selectBottomNavItem(
+                        context,
+                        selectedItem,
+                        selectedItem == state.selctedItem,
+                      );
+                    },
+                  )
+                : null,
           );
         },
       ),

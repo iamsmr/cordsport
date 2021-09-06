@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:codespot/blocs/blocs.dart';
+import 'package:codespot/blocs/user/user_bloc.dart';
 import 'package:codespot/config/paths.dart';
 import 'package:codespot/models/failure.dart';
 import 'package:codespot/repositories/repositories.dart';
@@ -14,38 +15,26 @@ part 'location_state.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   final LocationReository _locationReository;
+  final UserBloc _userBloc;
   final FirebaseFirestore _firebaseFirestore;
   final AuthBloc _authBloc;
 
-  late StreamSubscription<LatLng> _userSubscribtion;
+  late StreamSubscription<LatLng?> _userSubscribtion;
 
   LocationBloc({
+    required UserBloc userBloc,
     required LocationReository locationReository,
-     FirebaseFirestore? firebaseFirestore,
+    FirebaseFirestore? firebaseFirestore,
     required AuthBloc authBloc,
   })  : _locationReository = locationReository,
+        _userBloc = userBloc,
         _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
         _authBloc = authBloc,
         super(LocationState.initial()) {
-    _userSubscribtion =
-        _locationReository.locationChange().listen((userLocation) {
-      add(
-        LocationEventUpdateLocation(
-          userLocation: userLocation,
-        ),
-      );
-      _firebaseFirestore
-          .collection(Paths.users)
-          .doc(_authBloc.state.user?.uid)
-          .update({
-        "cordinates": GeoPoint(
-          userLocation.latitude,
-          userLocation.longitude,
-        )
-      });
+    _userSubscribtion = _locationReository.locationChange().listen((latLang) {
+      add(LocationEventUpdateLocation(userLocation: latLang));
     });
   }
-
   @override
   Future<void> close() {
     _userSubscribtion.cancel();
@@ -64,18 +53,26 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   }
 
   Stream<LocationState> _mapUserLocationToUserLocationState() async* {
-    LatLng location = await _locationReository.getLocation();
+    final location = await _locationReository.getLocation();
     yield state.copyWith(
-      status: LocationStatus.success,
       location: location,
+      status: LocationStatus.success,
     );
   }
 
   Stream<LocationState> _mapLocationStreamToState(
       LocationEventUpdateLocation location) async* {
+    _userBloc
+      ..add(
+        UserUpdateCordinates(latLng: _toGeoPoint(location.userLocation!)),
+      );
     yield state.copyWith(
       location: location.userLocation,
       status: LocationStatus.success,
     );
+  }
+
+  GeoPoint _toGeoPoint(LatLng latLng) {
+    return GeoPoint(latLng.latitude, latLng.longitude);
   }
 }

@@ -6,10 +6,10 @@ class UserState extends Equatable {
   final List<User> users;
   final Failure failure;
   final UserStatus status;
-  final LatLng latLng;
+  final User currentUser;
 
   const UserState({
-    required this.latLng,
+    required this.currentUser,
     required this.users,
     required this.failure,
     required this.status,
@@ -18,26 +18,26 @@ class UserState extends Equatable {
   factory UserState.initial() {
     return UserState(
       users: [],
-      latLng: LatLng(26.501185, 87.27583329999999) /*LatLng(0, 0)*/,
       failure: Failure(),
       status: UserStatus.unknown,
+      currentUser: User.empty(),
     );
   }
 
   @override
-  List<Object> get props => [users, failure, latLng, status];
+  List<Object> get props => [users, failure, status, currentUser];
 
   UserState copyWith({
     List<User>? users,
     Failure? failure,
     UserStatus? status,
-    LatLng? latLng,
+    User? user,
   }) {
     return UserState(
+      currentUser: user ?? this.currentUser,
       users: users ?? this.users,
       failure: failure ?? this.failure,
       status: status ?? this.status,
-      latLng: latLng ?? this.latLng,
     );
   }
 }

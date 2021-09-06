@@ -39,10 +39,13 @@ dependencies:
   
   location: ^4.3.0
   google_maps_flutter: ^2.0.6
+  google_maps_flutter_web: ^0.3.0+4
   geoflutterfire: ^3.0.1
 
   pinput: ^1.2.0
   intl_phone_number_input: ^0.7.0+2
+
+  responsive_builder: ^0.4.1
 
  
 

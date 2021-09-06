@@ -20,35 +20,6 @@ class AuthRepository extends BaseAuthRepository {
         _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   @override
-  Future<auth.User?> continueWithPhone({
-    required String verificationId,
-    required String smsCode,
-  }) async {
-    try {
-      auth.PhoneAuthCredential credential = auth.PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: smsCode,
-      );
-
-      final userCred = await _firebaseAuth.signInWithCredential(credential);
-      final user = userCred.user;
-      await _firebaseFirestore.collection(Paths.users).doc(user?.uid).set({
-        "codeName": "",
-        "uid": user?.uid,
-        "phoneNumber": user?.phoneNumber,
-        "cordinates": GeoPoint(0, 0),
-        "email": "",
-        "profileUrl": ""
-      });
-      return userCred.user;
-    } on auth.FirebaseAuthException catch (e) {
-      throw Failure(message: e.message ?? "", code: e.code);
-    } on PlatformException catch (e) {
-      throw Failure(message: e.message ?? "", code: e.code);
-    }
-  }
-
-  @override
   Stream<auth.User?> get userChanged => _firebaseAuth.userChanges();
 
   @override
@@ -91,8 +62,89 @@ class AuthRepository extends BaseAuthRepository {
   }
 
   @override
+  Future<void> verifyPhoneNumber({
+    required String phoneNumber,
+    required Duration timeOut,
+    required auth.PhoneVerificationFailed phoneVerificationFailed,
+    required auth.PhoneVerificationCompleted phoneVerificationCompleted,
+    required auth.PhoneCodeSent phoneCodeSent,
+    required auth.PhoneCodeAutoRetrievalTimeout autoRetrievalTimeout,
+  }) async {
+    try {
+      await _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: phoneVerificationCompleted,
+        verificationFailed: phoneVerificationFailed,
+        codeSent: phoneCodeSent,
+        codeAutoRetrievalTimeout: autoRetrievalTimeout,
+      );
+    } on auth.FirebaseAuthException catch (e) {
+      throw Failure(message: e.message, code: e.code);
+    } on PlatformException catch (e) {
+      throw Failure(message: e.message, code: e.code);
+    }
+  }
+
+  @override
+  Future<auth.User?> signInWithPhone({
+    required String verificationId,
+    required String smsCode,
+  }) async {
+    try {
+      auth.PhoneAuthCredential credential = auth.PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+
+      final userCred = await _firebaseAuth.signInWithCredential(credential);
+      final user = userCred.user;
+      _setInitialUserInfoToFirestore(user);
+
+      return userCred.user;
+    } on auth.FirebaseAuthException catch (e) {
+      throw Failure(message: e.message ?? "", code: e.code);
+    } on PlatformException catch (e) {
+      throw Failure(message: e.message ?? "", code: e.code);
+    }
+  }
+
+  @override
   Future<void> logout() async {
     await _googleSignIn.signOut();
     await _firebaseAuth.signOut();
+  }
+
+  @override
+  Future<auth.ConfirmationResult> phoneVerificationWeb({
+    required String phoneNumber,
+    auth.RecaptchaVerifier? recaptchaVerifier,
+  }) {
+    return _firebaseAuth.signInWithPhoneNumber(
+      phoneNumber,
+      // recaptchaVerifier,
+    );
+  }
+
+  @override
+  Future<auth.User?> signInWithPhoneWeb({
+    required String smsCode,
+    required auth.ConfirmationResult confirmationResult,
+  }) async {
+    auth.UserCredential userCredential =
+        await confirmationResult.confirm(smsCode);
+    await _firebaseAuth.signInWithCredential(userCredential.credential!);
+    await _setInitialUserInfoToFirestore(userCredential.user);
+    return userCredential.user;
+  }
+
+  _setInitialUserInfoToFirestore(auth.User? user) async {
+    await _firebaseFirestore.collection(Paths.users).doc(user?.uid).set({
+      "codeName": "",
+      "uid": user?.uid,
+      "phoneNumber": user?.phoneNumber,
+      "cordinates": GeoPoint(0, 0),
+      "email": "",
+      "profileUrl": ""
+    });
   }
 }

@@ -33,7 +33,7 @@ class User extends Equatable {
   Map<String, dynamic> toDocument() {
     return {
       "codeName": codeName,
-      "cordinates": cordinates,
+      "cordinates": _toGeoPoint(cordinates),
       "email": email,
       "phoneNumber": phoneNumber,
       "profileUrl": profileUrl,
@@ -56,7 +56,7 @@ class User extends Equatable {
     final data = snap.data() as Map;
     return User(
       codeName: data["codeName"] ?? "",
-      cordinates: data["cordinates"] ?? "",
+      cordinates: _toLatLang(data["cordinates"]),
       email: data["email"] ?? "",
       phoneNumber: data["phoneNumber"] ?? "",
       profileUrl: data["profileUrl"] ?? "",
@@ -81,4 +81,12 @@ class User extends Equatable {
       uid: uid ?? this.uid,
     );
   }
+}
+
+LatLng _toLatLang(GeoPoint point) {
+  return LatLng(point.latitude, point.longitude);
+}
+
+GeoPoint _toGeoPoint(LatLng latLng) {
+  return GeoPoint(latLng.latitude, latLng.longitude);
 }

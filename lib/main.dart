@@ -14,15 +14,13 @@ import 'package:codespot/config/custom-router.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = SimpleBlocObserver();
-  await Firebase.initializeApp( );
-  runApp(MyApp()); 
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("Hello world");
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(create: (_) => AuthRepository()),
@@ -44,17 +42,18 @@ class MyApp extends StatelessWidget {
             ),
           ),
           BlocProvider(
-            create: (context) => LocationBloc(
+            create: (context) => UserBloc(
               authBloc: context.read<AuthBloc>(),
-              locationReository: context.read<LocationReository>(),
-            ),
+              userRepository: context.read<UserRepository>(),
+            )..add(UserGetUserWitId()),
           ),
           BlocProvider(
-            create: (context) => UserBloc(
-              locationBloc: context.read<LocationBloc>(),
-              userRepository: context.read<UserRepository>(),
-            ),
-          )
+            create: (context) => LocationBloc(
+              userBloc: context.read<UserBloc>(),
+              authBloc: context.read<AuthBloc>(),
+              locationReository: context.read<LocationReository>(),
+            )..add(LocationEventGetLocation()),
+          ),
         ],
         child: MaterialApp(
           title: 'Cordspot',
@@ -66,9 +65,7 @@ class MyApp extends StatelessWidget {
               elevation: 1,
               centerTitle: true,
               color: Colors.white,
-              iconTheme: IconThemeData(
-                color: Colors.grey,
-              ),
+              iconTheme: IconThemeData(color: Colors.grey),
             ),
             primarySwatch: Colors.yellow,
             textSelectionTheme: TextSelectionThemeData(
