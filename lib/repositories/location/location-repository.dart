@@ -9,12 +9,11 @@ class LocationReository extends BaseLocationRepository {
   LocationReository({Location? location}) : _location = location ?? Location();
 
   @override
-  Future<LatLng?> getLocation() async {
+  Future<LatLng> getLocation() async {
     try {
-      final locationData = await _location.getLocation();
-      if (locationData.latitude != null && locationData.longitude != null) {
+     return await _location.getLocation().then((LocationData locationData) {
         return LatLng(locationData.latitude!, locationData.longitude!);
-      }
+      }).onError((error, stackTrace) => throw Failure(message: error.toString()));
     } catch (e) {
       throw Failure(message: e.toString());
     }

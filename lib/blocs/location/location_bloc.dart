@@ -16,10 +16,8 @@ part 'location_state.dart';
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   final LocationReository _locationReository;
   final UserBloc _userBloc;
-  final FirebaseFirestore _firebaseFirestore;
-  final AuthBloc _authBloc;
 
-  late StreamSubscription<LatLng?> _userSubscribtion;
+  late StreamSubscription<LatLng?> _locationSubscription;
 
   LocationBloc({
     required UserBloc userBloc,
@@ -28,16 +26,14 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     required AuthBloc authBloc,
   })  : _locationReository = locationReository,
         _userBloc = userBloc,
-        _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
-        _authBloc = authBloc,
         super(LocationState.initial()) {
-    _userSubscribtion = _locationReository.locationChange().listen((latLang) {
+    _locationSubscription = _locationReository.locationChange().listen((latLang) {
       add(LocationEventUpdateLocation(userLocation: latLang));
     });
   }
   @override
   Future<void> close() {
-    _userSubscribtion.cancel();
+    _locationSubscription.cancel();
     return super.close();
   }
 

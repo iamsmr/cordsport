@@ -14,7 +14,7 @@ part 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository _userRepository;
-  late StreamSubscription<List<User>> _userSubscribtion;
+  late StreamSubscription<List<User>>? _userSubscribtion;
   final AuthBloc _authBloc;
 
   UserBloc({
@@ -25,7 +25,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         super(UserState.initial());
   @override
   Future<void> close() {
-    _userSubscribtion.cancel();
+    _userSubscribtion?.cancel();
     return super.close();
   }
 
@@ -49,10 +49,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   Stream<UserState> _mapGetUserWithIdEventToState(
-      UserGetUserWitId event) async* {
-    final user = await _userRepository.getUserWithID(
+    UserGetUserWitId event,
+  ) async* {
+    User user = await _userRepository.getUserWithID(
       id: event.id ?? _authBloc.state.user!.uid,
     );
+
     yield state.copyWith(user: user, status: UserStatus.success);
   }
 

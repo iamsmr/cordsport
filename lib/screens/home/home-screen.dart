@@ -1,12 +1,14 @@
-import 'package:codespot/blocs/blocs.dart';
+import 'dart:typed_data';
+
+import 'package:codespot/blocs/auth/auth_bloc.dart';
 import 'package:codespot/blocs/location/location_bloc.dart';
 import 'package:codespot/blocs/user/user_bloc.dart';
-import 'package:codespot/models/models.dart';
-import 'package:codespot/repositories/user/user-repository.dart';
-import 'package:codespot/widget/loading.dart';
+import 'package:codespot/repositories/repositories.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:ui' as ui;
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,125 +16,113 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  GoogleMapController? _googleMapController;
-  final double zoomLevel = 11;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  void initState() {
-    Future.delayed(Duration.zero).then((_) {
-      context.read<LocationBloc>().add(LocationEventGetLocation());
-    });
-    super.initState();
+  late GoogleMapController _googleMapController;
+
+  bool _isCurrentUser(BuildContext context, String uid) {
+    return uid == context.read<AuthBloc>().state.user?.uid;
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    final byte = (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+
+    return byte;
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LocationBloc, LocationState>(
-      listener: (context, locationState) {
-        context
-            .read<UserRepository>()
-            .getUserWithInRadius(
-              radius: 10,
-              center: locationState.location!,
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: Drawer(),
+      appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            icon: Icon(Icons.notes_rounded),
+          ),
+          title: const Text(
+            "CORDSPOT",
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () {
+                context.read<AuthBloc>().add(AuthLogoutRequested());
+              },
             )
-            .listen((users) {
-          context.read<UserBloc>().add(UserUpdateUser(users: users));
-        });
-        if (_googleMapController != null) {
-          _googleMapController!.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                zoom: 15,
-                target: locationState.location!,
-              ),
-            ),
-          );
-        }
-      },
-      builder: (context, locationState) {
-        if (locationState.location != null) {
-          return BlocConsumer<UserBloc, UserState>(
-            listener: (context, userState) {},
-            builder: (context, userState) {
-              return WillPopScope(
-                onWillPop: () async => false,
-                child: Scaffold(
-                  key: _scaffoldKey,
-                  drawer: Drawer(),
-                  appBar: AppBar(
-                    leading: IconButton(
-                      onPressed: () {
-                        _scaffoldKey.currentState?.openDrawer();
-                      },
-                      icon: Icon(Icons.notes_rounded),
-                    ),
-                    title: const Text(
-                      "CORDSPOT",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          context.read<AuthBloc>().add(AuthLogoutRequested());
-                        },
-                        icon: Icon(Icons.exit_to_app),
-                      )
-                    ],
-                  ),
-                  body: GoogleMap(
-                    onCameraMoveStarted: () {
-                      print("camre move");
-                    },
-                    zoomControlsEnabled: true,
-                    myLocationButtonEnabled: true,
-                    zoomGesturesEnabled: true,
-                    onMapCreated: (controller) {
-                      setState(() {
-                        _googleMapController = controller;
-                      });
-                    },
-                    myLocationEnabled: true,
-                    markers: Set.from(
-                      userState.users.map(
-                        (e) => Marker(
-                          markerId: MarkerId(e.uid),
-                          position: e.cordinates,
-                          visible: true,
-                          icon: BitmapDescriptor.defaultMarker,
-                          infoWindow: InfoWindow(
-                            snippet: e.uid ==
-                                    context.read<AuthBloc>().state.user?.uid
-                                ? "You"
-                                : "User",
-                            title: e.codeName,
-                          ),
+          ]),
+      body: BlocConsumer<LocationBloc, LocationState>(
+        listener: (context, locationState) {
+          context
+              .read<UserRepository>()
+              .getUserWithInRadius(
+                radius: 10,
+                center: locationState.location!,
+              )
+              .listen((users) {
+            context.read<UserBloc>().add(UserUpdateUser(users: users));
+          });
+        },
+        builder: (context, locationState) {
+          return locationState.location == null
+              ? Column(
+                  children: [LinearProgressIndicator()],
+                )
+              : GoogleMap(
+                  onMapCreated: (controller) {
+                    setState(() {
+                      _googleMapController = controller;
+                    });
+                  },
+                  mapType: MapType.terrain,
+                  myLocationEnabled: true,
+                  markers: Set.from(
+                    context.read<UserBloc>().state.users.map((user) {
+                      // final Uint8List markerIcon = await getBytesFromAsset(
+                      //   'assets/images/active.png',
+                      //   100,
+                      // );
+                      return Marker(
+                        icon: BitmapDescriptor.defaultMarker,
+                        // icon: BitmapDescriptor.fromBytes(markerIcon),
+                        // icon: BitmapDescriptor.defaultMarkerWithHue(
+                        //     _isCurrentUser(context, user.uid) ? 0 : 200),
+                        infoWindow: InfoWindow(
+                          title: user.codeName,
+                          snippet: _isCurrentUser(context, user.uid)
+                              ? "You"
+                              : "User",
                         ),
-                      ),
-                    ),
-                    mapType: MapType.terrain,
-                    circles: Set.from([
+                        markerId: MarkerId(user.uid),
+                        position: user.cordinates,
+                      );
+                    }).toList(),
+                  ),
+                  circles: Set.from([
+                    if (locationState.location != null)
                       Circle(
-                        circleId: CircleId("1km radius circle"),
+                        circleId: CircleId("1km circle"),
                         center: locationState.location!,
                         radius: 1000,
-                        fillColor: Colors.blue.withOpacity(.3),
+                        fillColor: Colors.blue.withOpacity(.2),
                         strokeWidth: 2,
-                        strokeColor: const Color(0xff4361FF),
+                        strokeColor: Colors.blue,
                       )
-                    ]),
-                    initialCameraPosition: CameraPosition(
-                      zoom: 15,
-                      target: locationState.location!,
-                    ),
+                  ]),
+                  initialCameraPosition: CameraPosition(
+                    target: locationState.location!,
+                    zoom: 15,
                   ),
-                ),
-              );
-            },
-          );
-        }
-        return Loading();
-      },
+                );
+        },
+      ),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:codespot/blocs/blocs.dart';
+import 'package:codespot/blocs/location/location_bloc.dart';
 import 'package:codespot/blocs/user/user_bloc.dart';
+import 'package:codespot/repositories/repositories.dart';
 import 'package:codespot/repositories/user/user-repository.dart';
 import 'package:codespot/screens/navigation/cubit/bottom_nav_bar_cubit.dart';
 import 'package:codespot/screens/screens.dart';
@@ -13,24 +15,38 @@ class Wrapper extends StatelessWidget {
   static Route route() => PageRouteBuilder(
         settings: const RouteSettings(name: routeName),
         transitionDuration: const Duration(seconds: 0),
-        pageBuilder: (_, __, ___) => Wrapper(),
+        pageBuilder: (context, __, ___) => Wrapper(),
       );
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (context, userState) {
-        return BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, authState) {
-            if (authState.status == AuthStatus.authenticated) {
-              return BlocProvider(
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        if (authState.status == AuthStatus.authenticated) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => UserBloc(
+                  authBloc: context.read<AuthBloc>(),
+                  userRepository: context.read<UserRepository>(),
+                )..add(UserGetUserWitId()),
+              ),
+              BlocProvider(
+                create: (context) => LocationBloc(
+                  userBloc: context.read<UserBloc>(),
+                  authBloc: context.read<AuthBloc>(),
+                  locationReository: context.read<LocationReository>(),
+                )..add(LocationEventGetLocation()),
+              ),
+              BlocProvider(
                 create: (context) => BottomNavBarCubit(),
                 child: NavScreen(),
-              );
-            } else {
-              return LoginPage();
-            }
-          },
-        );
+              ),
+            ],
+            child: NavScreen(),
+          );
+        } else {
+          return LoginPage();
+        }
       },
     );
   }

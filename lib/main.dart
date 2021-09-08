@@ -1,5 +1,6 @@
 import 'package:codespot/blocs/location/location_bloc.dart';
 import 'package:codespot/blocs/user/user_bloc.dart';
+import 'package:codespot/screens/wrapper/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -41,25 +42,12 @@ class MyApp extends StatelessWidget {
               authRepository: context.read<AuthRepository>(),
             ),
           ),
-          BlocProvider(
-            create: (context) => UserBloc(
-              authBloc: context.read<AuthBloc>(),
-              userRepository: context.read<UserRepository>(),
-            )..add(UserGetUserWitId()),
-          ),
-          BlocProvider(
-            create: (context) => LocationBloc(
-              userBloc: context.read<UserBloc>(),
-              authBloc: context.read<AuthBloc>(),
-              locationReository: context.read<LocationReository>(),
-            )..add(LocationEventGetLocation()),
-          ),
         ],
         child: MaterialApp(
           title: 'Cordspot',
           debugShowCheckedModeBanner: false,
           onGenerateRoute: CustomRouter.onGenerateRoute,
-          initialRoute: "/wrapper",
+          initialRoute: '/wrapper',
           theme: ThemeData(
             appBarTheme: AppBarTheme(
               elevation: 1,
