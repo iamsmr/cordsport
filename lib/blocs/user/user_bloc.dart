@@ -61,10 +61,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       codeName: event.codeName,
       id: _authBloc.state.user!.uid,
     );
-
-    add(UserGetUserWitId());
-
-    yield state.copyWith();
+    yield state.copyWith(status: UserStatus.success);
   }
 
   Stream<UserState> _mapUpdateCordinatesEventToState(

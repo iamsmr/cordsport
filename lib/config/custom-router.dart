@@ -14,6 +14,8 @@ class CustomRouter {
         return Wrapper.route();
       case VerificationPage.routeName:
         return VerificationPage.route();
+      case NavScreen.routeName:
+        return NavScreen.route();
       default:
         return _errorRoute();
     }
@@ -37,16 +39,16 @@ class CustomRouter {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 40),
-                SizedBox(height: 13),
-                Text(
+                const Icon(Icons.error_outline, size: 40),
+                const SizedBox(height: 13),
+                const Text(
                   "Something went wrong",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   "we can not find the route you are asking for. Something went wrong...",
                   textAlign: TextAlign.center,

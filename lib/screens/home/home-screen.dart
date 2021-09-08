@@ -1,3 +1,4 @@
+import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/blocs/location/location_bloc.dart';
 import 'package:codespot/blocs/user/user_bloc.dart';
 import 'package:codespot/models/models.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   GoogleMapController? _googleMapController;
   final double zoomLevel = 11;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -56,6 +58,28 @@ class _HomePageState extends State<HomePage> {
               return WillPopScope(
                 onWillPop: () async => false,
                 child: Scaffold(
+                  key: _scaffoldKey,
+                  drawer: Drawer(),
+                  appBar: AppBar(
+                    leading: IconButton(
+                      onPressed: () {
+                        _scaffoldKey.currentState?.openDrawer();
+                      },
+                      icon: Icon(Icons.notes_rounded),
+                    ),
+                    title: const Text(
+                      "CORDSPOT",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(AuthLogoutRequested());
+                        },
+                        icon: Icon(Icons.exit_to_app),
+                      )
+                    ],
+                  ),
                   body: GoogleMap(
                     onCameraMoveStarted: () {
                       print("camre move");
@@ -74,8 +98,14 @@ class _HomePageState extends State<HomePage> {
                         (e) => Marker(
                           markerId: MarkerId(e.uid),
                           position: e.cordinates,
+                          visible: true,
+                          icon: BitmapDescriptor.defaultMarker,
                           infoWindow: InfoWindow(
-                            title: e.codeName
+                            snippet: e.uid ==
+                                    context.read<AuthBloc>().state.user?.uid
+                                ? "You"
+                                : "User",
+                            title: e.codeName,
                           ),
                         ),
                       ),

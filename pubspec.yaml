@@ -44,6 +44,7 @@ dependencies:
 
   pinput: ^1.2.0
   intl_phone_number_input: ^0.7.0+2
+  extended_text_field: ^8.0.0
 
   responsive_builder: ^0.4.1
 

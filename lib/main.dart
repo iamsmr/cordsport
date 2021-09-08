@@ -65,10 +65,10 @@ class MyApp extends StatelessWidget {
               elevation: 1,
               centerTitle: true,
               color: Colors.white,
-              iconTheme: IconThemeData(color: Colors.grey),
+              iconTheme: const IconThemeData(color: Colors.grey),
             ),
             primarySwatch: Colors.yellow,
-            textSelectionTheme: TextSelectionThemeData(
+            textSelectionTheme: const TextSelectionThemeData(
               cursorColor: Colors.black,
             ),
           ),

@@ -12,9 +12,9 @@ class CustomErrorDialgo extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text(title),
+      title:  Text(title),
       content: Container(
-        constraints: BoxConstraints(maxWidth: 500),
+        constraints:const BoxConstraints(maxWidth: 500),
         child: Text(content),
       ),
       actions: [

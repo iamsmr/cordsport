@@ -24,9 +24,7 @@ class Wrapper extends StatelessWidget {
             if (authState.status == AuthStatus.authenticated) {
               return BlocProvider(
                 create: (context) => BottomNavBarCubit(),
-                child: userState.currentUser.codeName.isEmpty
-                    ? CodeNameSetting()
-                    : NavScreen(),
+                child: NavScreen(),
               );
             } else {
               return LoginPage();
@@ -65,10 +63,11 @@ class _CodeNameSettingState extends State<CodeNameSetting> {
       backgroundColor: const Color(0xffF6F5FA),
       appBar: AppBar(
         title: Text("Code Name"),
-        // leading: Text(""),
+        leading: SizedBox(),
       ),
       body: Center(
-        child: Padding(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 500),
           padding: const EdgeInsets.all(30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -104,7 +103,7 @@ class _CodeNameSettingState extends State<CodeNameSetting> {
               SizedBox(height: 50),
               MaterialButton(
                 minWidth: double.infinity,
-                height: 50,
+                height: 60,
                 onPressed: () {
                   if (_codeName.text.isNotEmpty) {
                     context.read<UserBloc>().add(

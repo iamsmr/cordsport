@@ -26,10 +26,7 @@ class LocationReository extends BaseLocationRepository {
       (value) {
         return _location.onLocationChanged.map((LocationData locationData) {
           if (locationData.latitude != null && locationData.longitude != null) {
-            return LatLng(
-              locationData.latitude!,
-              locationData.longitude!,
-            );
+            return LatLng(locationData.latitude!, locationData.longitude!);
           }
         });
       },

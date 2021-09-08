@@ -14,13 +14,19 @@ class NavScreen extends StatelessWidget {
     BottomNavItem.chat: Icons.chat_rounded,
     BottomNavItem.profile: Icons.person_rounded,
   };
+  static const String routeName = "/navscreen";
+  static Route route() {
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (context) => NavScreen(),
+    );
+  }
 
   final Map<BottomNavItem, GlobalKey<NavigatorState>> navigatorKeys = {
     BottomNavItem.home: GlobalKey<NavigatorState>(),
     BottomNavItem.chat: GlobalKey<NavigatorState>(),
     BottomNavItem.profile: GlobalKey<NavigatorState>()
   };
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -28,28 +34,7 @@ class NavScreen extends StatelessWidget {
       child: BlocBuilder<BottomNavBarCubit, BottomNavBarState>(
         builder: (context, state) {
           return Scaffold(
-            key: _scaffoldKey,
-            drawer: Drawer(),
-            appBar: AppBar(
-              leading: IconButton(
-                onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
-                },
-                icon: Icon(Icons.notes_rounded),
-              ),
-              title: const Text(
-                "CORDSPOT",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(AuthLogoutRequested());
-                  },
-                  icon: Icon(Icons.exit_to_app),
-                )
-              ],
-            ),
+          
             body: Stack(
               children: _items
                   .map((item, _) {

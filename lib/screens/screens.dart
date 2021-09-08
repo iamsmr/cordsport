@@ -7,4 +7,6 @@ export 'navigation/navigation-page.dart';
 
 export 'home/home-screen.dart';
 export 'profile/profile-screen.dart';
+
 export 'chat/chat-screen.dart';
+export 'chat/chat-room.dart';

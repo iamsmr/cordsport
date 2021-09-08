@@ -47,8 +47,8 @@ class UserRepository extends BaseUserRepository {
       final cordinats = data["cordinates"];
       final latitude = cordinats.latitude;
       final longitude = cordinats.longitude;
-      final distacne = point.distance(lat: latitude, lng: longitude);
-      if (distacne <= 1000) {
+      final distacne = point.distance(lat: latitude, lng: longitude) ;
+      if (distacne <= 1) {
         _newUsers.add(users[i]);
       }
     }
