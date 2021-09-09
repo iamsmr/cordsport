@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:codespot/config/paths.dart';
 import 'package:equatable/equatable.dart';
@@ -38,7 +36,7 @@ class Message extends Equatable {
       text: text ?? this.text,
       sender: sender ?? this.sender,
       me: me ?? this.me,
-      datetime: timestamp ?? this.datetime,
+      datetime: timestamp ?? datetime,
       messageRead: messageRead ?? this.messageRead,
       messageId: messageId ?? this.messageId,
       convercationId: convercationId ?? this.convercationId,
@@ -55,7 +53,6 @@ class Message extends Equatable {
       'me': toDocumentRefrence(me),
       'timestamp': datetime.millisecondsSinceEpoch,
       'messageRead': messageRead,
-      'messageId': messageId,
       'convercationId': convercationId,
     };
   }
