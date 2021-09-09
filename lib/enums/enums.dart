@@ -1,1 +1,1 @@
-export 'bottom-nav-item.dart';
+export 'bottom_nav_item.dart';

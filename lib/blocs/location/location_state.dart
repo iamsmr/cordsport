@@ -1,37 +1,13 @@
 part of 'location_bloc.dart';
 
-enum LocationStatus { unkown, success, error }
+abstract class LocationState {}
 
-class LocationState extends Equatable {
-  final LatLng? location;
-  final LocationStatus status;
-  final Failure failure;
-  const LocationState({
-    required this.location,
-    required this.status,
-    required this.failure,
-  });
+class LocationInitial extends LocationState {}
 
-  static LocationState initial() {
-    return LocationState(
-      location: null,
-      status: LocationStatus.unkown,
-      failure: Failure(),
-    );
-  }
+class LocationLoadInProgress extends LocationState {}
 
-  @override
-  List<Object?> get props => [location, status, failure];
+class LocationLoadSuccess extends LocationState {
+  final Position position;
 
-  LocationState copyWith({
-    LatLng? location,
-    LocationStatus? status,
-    Failure? failure,
-  }) {
-    return LocationState(
-      location: location ?? this.location,
-      status: status ?? this.status,
-      failure: failure ?? this.failure,
-    );
-  }
+  LocationLoadSuccess({required this.position});
 }

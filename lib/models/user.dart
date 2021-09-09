@@ -42,7 +42,7 @@ class User extends Equatable {
   }
 
   factory User.empty() {
-    return User(
+    return const User(
       codeName: "",
       cordinates: LatLng(0, 0),
       email: "",

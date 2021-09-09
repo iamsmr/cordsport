@@ -1,12 +1,12 @@
 export 'wrapper/wrapper.dart';
 
-export 'Authentication/login-page.dart';
-export 'Authentication/verification-page.dart';
+export 'Authentication/login_page.dart';
+export 'Authentication/verification_page.dart';
 
-export 'navigation/navigation-page.dart';
+export 'navigation/navigation_page.dart';
 
-export 'home/home-screen.dart';
-export 'profile/profile-screen.dart';
+export 'home/home_screen.dart';
+export 'profile/profile_screen.dart';
 
-export 'chat/chat-screen.dart';
-export 'chat/chat-room.dart';
+export 'chat/chat_screen.dart';
+export 'chat/chat_room.dart';

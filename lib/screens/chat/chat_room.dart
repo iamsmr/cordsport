@@ -10,14 +10,12 @@ class ChatRoom extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(user.codeName)),
       body: Column(
-        children: [
-          Spacer(),
-        ],
+        children: const [Spacer()],
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
-          margin: EdgeInsets.only(bottom: 5),
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          margin: const EdgeInsets.only(bottom: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           height: 60,
           width: double.infinity,
           child: Row(
@@ -26,13 +24,13 @@ class ChatRoom extends StatelessWidget {
               Expanded(
                 child: TextFormField(
                   keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: "Message",
                   ),
                 ),
               ),
-              IconButton(onPressed: () {}, icon: Icon(Icons.send))
+              IconButton(onPressed: () {}, icon: const Icon(Icons.send))
             ],
           ),
         ),

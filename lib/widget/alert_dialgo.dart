@@ -21,7 +21,7 @@ class CustomErrorDialgo extends StatelessWidget {
         MaterialButton(
           minWidth: double.infinity,
           color: const Color(0xffFBD737),
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),

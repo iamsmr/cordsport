@@ -1,2 +1,2 @@
 export 'loading.dart';
-export 'alert-dialgo.dart';
+export 'alert_dialgo.dart';

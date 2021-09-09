@@ -15,21 +15,14 @@ class UserUpdateUser extends UserEvent {
   List<Object> get props => [users];
 }
 
-class UserGetUserWitId extends UserEvent {
+class UserGetCurrentUser extends UserEvent {}
+
+class UserUpdatePosition extends UserEvent {
+  final Position position;
   final String? id;
-
-  const UserGetUserWitId({this.id});
-
+  const UserUpdatePosition({required this.position, this.id});
   @override
-  List<Object?> get props => [id];
-}
-
-class UserUpdateCordinates extends UserEvent {
-  final GeoPoint latLng;
-  final String? id;
-  const UserUpdateCordinates({required this.latLng, this.id});
-  @override
-  List<Object?> get props => [latLng, id];
+  List<Object?> get props => [position, id];
 }
 
 class UserUpdateCodeName extends UserEvent {

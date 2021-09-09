@@ -1,4 +1,4 @@
-import 'package:codespot/config/custom-router.dart';
+import 'package:codespot/config/custom_router.dart';
 import 'package:codespot/enums/enums.dart';
 import 'package:codespot/screens/screens.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class TabNavigator extends StatelessWidget {
       onGenerateInitialRoutes: (_, initialRoute) {
         return [
           MaterialPageRoute(
-            settings: RouteSettings(name: tabNavigatorRoot),
+            settings: const RouteSettings(name: tabNavigatorRoot),
             builder: (context) => routeBuilder[initialRoute]!(context),
           ),
         ];
@@ -38,13 +38,13 @@ class TabNavigator extends StatelessWidget {
   Widget _getScreen(BuildContext context, BottomNavItem item) {
     switch (item) {
       case BottomNavItem.home:
-        return HomePage();
+        return const HomePage();
       case BottomNavItem.chat:
         return ChatScreen();
       case BottomNavItem.profile:
-        return ProfileScreren();
+        return const ProfileScreren();
       default:
-        return Scaffold();
+        return const Scaffold();
     }
   }
 }

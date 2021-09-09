@@ -5,8 +5,6 @@ import 'package:pinput/pin_put/pin_put.dart';
 
 class VerificationPage extends StatefulWidget {
   static const String routeName = "/phoneVerification";
-  static Route route() =>
-      MaterialPageRoute(builder: (context) => VerificationPage());
 
   @override
   _VerificationPageState createState() => _VerificationPageState();
@@ -17,7 +15,7 @@ class _VerificationPageState extends State<VerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Verify Phone Number"),
+        title: const Text("Verify Phone Number"),
       ),
       backgroundColor: const Color(0xffF6F5FA),
       body: Center(
@@ -29,7 +27,7 @@ class _VerificationPageState extends State<VerificationPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset("assets/images/verification.png"),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   "You will recive 4 digit\ncode to verify",
                   textAlign: TextAlign.center,
@@ -38,11 +36,11 @@ class _VerificationPageState extends State<VerificationPage> {
                     fontSize: 17,
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Container(
-                  constraints: BoxConstraints(maxWidth: 500),
+                  constraints: const BoxConstraints(maxWidth: 500),
                   child: PinPut(
-                    animationDuration: Duration(seconds: 0),
+                    animationDuration: const Duration(seconds: 0),
                     checkClipboard: true,
                     onChanged: (val) {
                       context.read<AuthCubit>().smsCodeChanged(val);
@@ -60,21 +58,21 @@ class _VerificationPageState extends State<VerificationPage> {
                     followingFieldDecoration: pinPutDecoration,
                   ),
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 MaterialButton(
                   minWidth: 200,
                   height: 50,
                   onPressed: () {
                     context.read<AuthCubit>().signInWithPhoneNumber();
                   },
-                  child: Text(
+                  child: const Text(
                     "Verify",
                     style: TextStyle(fontSize: 17),
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  color: Color(0xffFBD737),
+                  color: const Color(0xffFBD737),
                 )
               ],
             ),
@@ -87,7 +85,7 @@ class _VerificationPageState extends State<VerificationPage> {
   final BoxDecoration pinPutDecoration = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(10.0),
-    boxShadow: [
+    boxShadow: const [
       BoxShadow(
         color: Color.fromRGBO(198, 193, 193, 0.25),
         offset: Offset(0, 4),

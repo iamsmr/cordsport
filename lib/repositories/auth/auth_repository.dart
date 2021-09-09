@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:codespot/config/paths.dart';
 import 'package:codespot/models/models.dart';
-import 'package:codespot/repositories/auth/base-auth-repository.dart';
+import 'package:codespot/repositories/auth/base_auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -44,7 +44,7 @@ class AuthRepository extends BaseAuthRepository {
             "codeName": "",
             "uid": user?.uid,
             "phoneNumber": user?.phoneNumber,
-            "cordinates": GeoPoint(0, 0),
+            "cordinates": const GeoPoint(0, 0),
             "email": user?.email,
             "profileUrl": user?.photoURL
           });
@@ -142,7 +142,7 @@ class AuthRepository extends BaseAuthRepository {
       "codeName": "",
       "uid": user?.uid,
       "phoneNumber": user?.phoneNumber,
-      "cordinates": GeoPoint(0, 0),
+      "cordinates": const GeoPoint(0, 0),
       "email": "",
       "profileUrl": ""
     });

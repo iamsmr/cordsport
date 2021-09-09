@@ -2,21 +2,18 @@ import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/blocs/location/location_bloc.dart';
 import 'package:codespot/blocs/user/user_bloc.dart';
 import 'package:codespot/repositories/repositories.dart';
-import 'package:codespot/repositories/user/user-repository.dart';
+import 'package:codespot/repositories/user/user_repository.dart';
 import 'package:codespot/screens/navigation/cubit/bottom_nav_bar_cubit.dart';
 import 'package:codespot/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:codespot/screens/Authentication/login-page.dart';
+import 'package:codespot/screens/Authentication/login_page.dart';
 
 class Wrapper extends StatelessWidget {
   static const String routeName = "/wrapper";
-  static Route route() => PageRouteBuilder(
-        settings: const RouteSettings(name: routeName),
-        transitionDuration: const Duration(seconds: 0),
-        pageBuilder: (context, __, ___) => Wrapper(),
-      );
+
+  const Wrapper({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -28,14 +25,13 @@ class Wrapper extends StatelessWidget {
                 create: (context) => UserBloc(
                   authBloc: context.read<AuthBloc>(),
                   userRepository: context.read<UserRepository>(),
-                )..add(UserGetUserWitId()),
+                ),
               ),
               BlocProvider(
                 create: (context) => LocationBloc(
+                  userRepository: context.read<UserRepository>(),
                   userBloc: context.read<UserBloc>(),
-                  authBloc: context.read<AuthBloc>(),
-                  locationReository: context.read<LocationReository>(),
-                )..add(LocationEventGetLocation()),
+                )..add(LocationStarted()),
               ),
               BlocProvider(
                 create: (context) => BottomNavBarCubit(),
@@ -45,7 +41,7 @@ class Wrapper extends StatelessWidget {
             child: NavScreen(),
           );
         } else {
-          return LoginPage();
+          return const LoginPage();
         }
       },
     );
@@ -60,30 +56,19 @@ class CodeNameSetting extends StatefulWidget {
 }
 
 class _CodeNameSettingState extends State<CodeNameSetting> {
-  late TextEditingController _codeName;
-  @override
-  void initState() {
-    _codeName = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _codeName.dispose();
-    super.dispose();
-  }
+  final TextEditingController _codeName = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF6F5FA),
       appBar: AppBar(
-        title: Text("Code Name"),
-        leading: SizedBox(),
+        title: const Text("Code Name"),
+        leading: const SizedBox(),
       ),
       body: Center(
         child: Container(
-          constraints: BoxConstraints(maxWidth: 500),
+          constraints: const BoxConstraints(maxWidth: 500),
           padding: const EdgeInsets.all(30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -93,7 +78,7 @@ class _CodeNameSettingState extends State<CodeNameSetting> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       blurRadius: 10,
                       color: Colors.black12,
@@ -109,37 +94,36 @@ class _CodeNameSettingState extends State<CodeNameSetting> {
                 child: TextFormField(
                   autofocus: true,
                   controller: _codeName,
-                  style: TextStyle(fontSize: 20),
-                  decoration: InputDecoration(
+                  style: const TextStyle(fontSize: 20),
+                  decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: "Code Name",
                   ),
                 ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               MaterialButton(
                 minWidth: double.infinity,
                 height: 60,
                 onPressed: () {
                   if (_codeName.text.isNotEmpty) {
-                    context.read<UserBloc>().add(
-                          UserUpdateCodeName(codeName: _codeName.text),
-                        );
+                    _updateCodeName(context);
                   }
                 },
-                child: Text(
-                  "Continue",
-                  style: TextStyle(fontSize: 17),
-                ),
+                child: const Text("Continue", style: TextStyle(fontSize: 17)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                color: Color(0xffFBD737),
+                color: const Color(0xffFBD737),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _updateCodeName(BuildContext context) {
+    context.read<UserBloc>().add(UserUpdateCodeName(codeName: _codeName.text));
   }
 }

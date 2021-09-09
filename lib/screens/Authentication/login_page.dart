@@ -6,17 +6,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
-import 'package:codespot/screens/Authentication/verification-page.dart';
+import 'package:codespot/screens/Authentication/verification_page.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  @override
   void didChangeDependencies() {
-    precacheImage(AssetImage("assets/images/google_logo.png"), context);
-    precacheImage(AssetImage("assets/images/Logo.png"), context);
+    precacheImage(const AssetImage("assets/images/google_logo.png"), context);
+    precacheImage(const AssetImage("assets/images/Logo.png"), context);
     super.didChangeDependencies();
   }
 
@@ -52,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
               body: SafeArea(
                 child: Center(
                   child: Container(
-                    constraints: BoxConstraints(maxWidth: 450),
+                    constraints: const BoxConstraints(maxWidth: 450),
                     child: Stack(
                       children: [
                         Center(
@@ -68,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                                     height: 60,
                                   ),
                                   const SizedBox(height: 15),
-                                  Text(
+                                  const Text(
                                     "CORDSPOT",
                                     style: TextStyle(
                                       fontSize: 30,
@@ -76,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 10),
-                                  Text(
+                                  const Text(
                                     "location based anynomous\nchating application",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -84,12 +87,12 @@ class _LoginPageState extends State<LoginPage> {
                                       color: Colors.grey,
                                     ),
                                   ),
-                                  SizedBox(height: 50),
+                                  const SizedBox(height: 50),
                                   Form(
                                     key: _formKey,
                                     child: Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 2),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
                                         color: Colors.white,
@@ -99,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                                         validator: (val) {
                                           String patttern =
                                               r'(^(?:[+0]9)?[0-9]{10,12}$)';
-                                          RegExp regExp = new RegExp(patttern);
+                                          RegExp regExp = RegExp(patttern);
                                           if (!regExp.hasMatch(val!)) {
                                             return "Enter a valid phone";
                                           } else if (val.length < 8) {
@@ -109,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                                           }
                                         },
                                         keyboardType: TextInputType.phone,
-                                        selectorConfig: SelectorConfig(
+                                        selectorConfig: const SelectorConfig(
                                           showFlags: true,
                                           selectorType:
                                               PhoneInputSelectorType.DROPDOWN,
@@ -124,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 30),
+                                  const SizedBox(height: 30),
                                   MaterialButton(
                                     minWidth: double.infinity,
                                     height: 50,
@@ -133,14 +136,14 @@ class _LoginPageState extends State<LoginPage> {
                                         verifyPhoneNumber(context);
                                       }
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       "Continue",
                                       style: TextStyle(fontSize: 17),
                                     ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    color: Color(0xffFBD737),
+                                    color: const Color(0xffFBD737),
                                   ),
                                   const SizedBox(height: 30),
                                   InkWell(
@@ -154,13 +157,13 @@ class _LoginPageState extends State<LoginPage> {
                                       child: Container(
                                         height: 57,
                                         width: double.infinity,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 20),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(20),
                                           color: Colors.white,
-                                          boxShadow: [
+                                          boxShadow: const [
                                             BoxShadow(
                                               color: Color.fromRGBO(
                                                   185, 182, 182, 0.5),
@@ -180,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                                               width: 29,
                                             ),
                                             SizedBox(width: 10),
-                                            Text(
+                                            const Text(
                                               "Continue with google",
                                               style: TextStyle(
                                                 color: Color(0xff777777),
@@ -188,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
-                                            Spacer(),
+                                            const Spacer(),
                                           ],
                                         ),
                                       ),

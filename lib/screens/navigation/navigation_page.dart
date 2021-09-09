@@ -1,4 +1,3 @@
-import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/enums/enums.dart';
 import 'package:codespot/screens/navigation/cubit/bottom_nav_bar_cubit.dart';
 import 'package:codespot/screens/navigation/widget/widgets.dart';
@@ -6,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'widget/tab-navigator.dart';
+import 'widget/tab_navigator.dart';
 
 class NavScreen extends StatelessWidget {
   final Map<BottomNavItem, IconData> _items = const {
@@ -15,6 +14,8 @@ class NavScreen extends StatelessWidget {
     BottomNavItem.profile: Icons.person_rounded,
   };
   static const String routeName = "/navscreen";
+
+  NavScreen({Key? key}) : super(key: key);
   static Route route() {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),

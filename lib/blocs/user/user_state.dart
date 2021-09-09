@@ -17,8 +17,8 @@ class UserState extends Equatable {
 
   factory UserState.initial() {
     return UserState(
-      users: [],
-      failure: Failure(),
+      users: const [],
+      failure: const Failure(),
       status: UserStatus.unknown,
       currentUser: User.empty(),
     );
@@ -31,10 +31,10 @@ class UserState extends Equatable {
     List<User>? users,
     Failure? failure,
     UserStatus? status,
-    User? user,
+    User? currentUser,
   }) {
     return UserState(
-      currentUser: user ?? this.currentUser,
+      currentUser: currentUser ?? this.currentUser,
       users: users ?? this.users,
       failure: failure ?? this.failure,
       status: status ?? this.status,

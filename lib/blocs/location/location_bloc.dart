@@ -1,74 +1,74 @@
 import 'dart:async';
-
-import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/blocs/user/user_bloc.dart';
-import 'package:codespot/config/paths.dart';
-import 'package:codespot/models/failure.dart';
+import 'package:codespot/models/models.dart';
 import 'package:codespot/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'package:bloc/bloc.dart';
+import 'package:geolocator/geolocator.dart';
 
 part 'location_event.dart';
 part 'location_state.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
-  final LocationReository _locationReository;
-  final UserBloc _userBloc;
+  StreamSubscription<List<User>>? _userSubscribtion;
+  final UserRepository _userRepository;
+  late StreamSubscription<Position> _locationSubscription;
 
-  late StreamSubscription<LatLng?> _locationSubscription;
+  final UserBloc _userBloc;
 
   LocationBloc({
     required UserBloc userBloc,
-    required LocationReository locationReository,
-    FirebaseFirestore? firebaseFirestore,
-    required AuthBloc authBloc,
-  })  : _locationReository = locationReository,
-        _userBloc = userBloc,
-        super(LocationState.initial()) {
-    _locationSubscription = _locationReository.locationChange().listen((latLang) {
-      add(LocationEventUpdateLocation(userLocation: latLang));
-    });
-  }
-  @override
-  Future<void> close() {
-    _locationSubscription.cancel();
-    return super.close();
-  }
+    required UserRepository userRepository,
+  })  : _userBloc = userBloc,
+        _userRepository = userRepository,
+        super(LocationInitial());
 
   @override
   Stream<LocationState> mapEventToState(
     LocationEvent event,
   ) async* {
-    if (event is LocationEventGetLocation) {
-      yield* _mapUserLocationToUserLocationState();
-    } else if (event is LocationEventUpdateLocation) {
-      yield* _mapLocationStreamToState(event);
+    if (event is LocationStarted) {
+      yield* _mapLocationStartedEventToState();
+    } else if (event is LocationChanged) {
+      yield LocationLoadSuccess(position: event.position);
     }
+    // TODO: implement later
+
+    // else if (event is LocationUserGetUserWithInOneKiloMterDistance) {
+    //   yield* _mapGetUserWithRadiusEventToState();
+    // }
   }
 
-  Stream<LocationState> _mapUserLocationToUserLocationState() async* {
-    final location = await _locationReository.getLocation();
-    yield state.copyWith(
-      location: location,
-      status: LocationStatus.success,
-    );
+  Stream<LocationState> _mapLocationStartedEventToState() async* {
+    yield(LocationLoadInProgress());
+    // _locationSubscription.cancel();
+    _userSubscribtion?.cancel();
+    _locationSubscription = Geolocator.getPositionStream().listen((position) {
+      _userBloc.add(UserUpdatePosition(position: position));
+      _userRepository
+          .getUserWithInRadius(radius: 10, center: position)
+          .listen((users) {
+        _userBloc.add(UserUpdateUser(users: users));
+      });
+      add(LocationChanged(position: position));
+
+      // (LocationLoadSuccess(position: position));
+    });
   }
 
-  Stream<LocationState> _mapLocationStreamToState(
-      LocationEventUpdateLocation location) async* {
-    _userBloc
-      ..add(
-        UserUpdateCordinates(latLng: _toGeoPoint(location.userLocation!)),
-      );
-    yield state.copyWith(
-      location: location.userLocation,
-      status: LocationStatus.success,
-    );
+  @override
+  Future<void> close() {
+    _locationSubscription?.cancel();
+    return super.close();
   }
 
-  GeoPoint _toGeoPoint(LatLng latLng) {
-    return GeoPoint(latLng.latitude, latLng.longitude);
-  }
+  // TODO: implement later
+
+//   Stream<LocationState> _mapGetUserWithRadiusEventToState() async* {
+//     if (state is LocationLoadSuccess) {
+//       final state = this.state as LocationLoadSuccess;
+//       _userSubscribtion?.cancel();
+//     }
+//   }
 }
