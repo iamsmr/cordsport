@@ -59,9 +59,10 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   @override
   Future<void> close() {
-    _locationSubscription?.cancel();
+    _locationSubscription.cancel();
     return super.close();
   }
+
 
   // TODO: implement later
 
