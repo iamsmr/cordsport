@@ -6,26 +6,26 @@ import 'package:codespot/models/models.dart';
 
 class Message extends Equatable {
   final String text;
-  final User sender;
+  final User other;
   final User me;
   final DateTime datetime;
   final bool messageRead;
-  final String messageId;
+  final String? messageId;
   final String convercationId;
 
   const Message({
+    this.messageId,
     required this.text,
-    required this.sender,
+    required this.other,
     required this.me,
     required this.datetime,
     required this.messageRead,
-    required this.messageId,
     required this.convercationId,
   });
 
   Message copyWith({
     String? text,
-    User? sender,
+    User? other,
     User? me,
     DateTime? timestamp,
     bool? messageRead,
@@ -34,7 +34,7 @@ class Message extends Equatable {
   }) {
     return Message(
       text: text ?? this.text,
-      sender: sender ?? this.sender,
+      other: other ?? this.other,
       me: me ?? this.me,
       datetime: timestamp ?? datetime,
       messageRead: messageRead ?? this.messageRead,
@@ -49,7 +49,7 @@ class Message extends Equatable {
   Map<String, dynamic> toDocument() {
     return {
       'text': text,
-      'sender': toDocumentRefrence(sender),
+      'other': toDocumentRefrence(other),
       'me': toDocumentRefrence(me),
       'timestamp': datetime.millisecondsSinceEpoch,
       'messageRead': messageRead,
@@ -59,7 +59,7 @@ class Message extends Equatable {
 
   static Future<Message?> fromDocument(DocumentSnapshot snapshot) async {
     final data = snapshot.data() as Map<String, dynamic>;
-    final senderref = data["sender"] as DocumentReference?;
+    final senderref = data["other"] as DocumentReference?;
     final meRef = data["me"] as DocumentReference?;
 
     if (senderref != null && meRef != null) {
@@ -69,7 +69,7 @@ class Message extends Equatable {
       if (senderDoc.exists && meDoc.exists) {
         return Message(
           text: data['text'] ?? "",
-          sender: User.fromDocument(senderDoc),
+          other: User.fromDocument(senderDoc),
           me: User.fromDocument(meDoc),
           datetime: (data["timestamp"] as Timestamp).toDate(),
           messageRead: data["messageRead"] ?? false,
@@ -85,10 +85,10 @@ class Message extends Equatable {
   }
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       text,
-      sender,
+      other,
       me,
       datetime,
       messageRead,

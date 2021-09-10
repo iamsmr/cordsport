@@ -30,17 +30,15 @@ class ChatScreen extends StatelessWidget {
               itemCount: state.users.length,
               itemBuilder: (context, int index) {
                 final user = state.users[index];
-                return Container(
-                  child: ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => ChatRoom(user: user)),
-                    ),
-                    title: Text(user.codeName),
-                    leading: CircleAvatar(
-                      backgroundColor: const Color(0xffFBD737),
-                      child: Icon(Icons.person, color: Colors.grey[600]),
-                    ),
+                return ListTile(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ChatRoom(user: user)),
+                  ),
+                  title: Text(user.codeName),
+                  leading: CircleAvatar(
+                    backgroundColor: const Color(0xffFBD737),
+                    child: Icon(Icons.person, color: Colors.grey[600]),
                   ),
                 );
               },
