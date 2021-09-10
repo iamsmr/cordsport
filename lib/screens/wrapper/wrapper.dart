@@ -25,7 +25,7 @@ class Wrapper extends StatelessWidget {
                 create: (context) => UserBloc(
                   authBloc: context.read<AuthBloc>(),
                   userRepository: context.read<UserRepository>(),
-                ),
+                )..add(UserGetCurrentUser()),
               ),
               BlocProvider(
                 create: (context) => LocationBloc(

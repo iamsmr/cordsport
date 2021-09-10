@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 part 'phoneauth_state.dart';
 
 class AuthCubit extends Cubit<AuthCubitState> {
-  AuthRepository _authRepository;
+  final AuthRepository _authRepository;
   final auth.FirebaseAuth _firebaseAuth;
 
   AuthCubit({
@@ -39,17 +39,21 @@ class AuthCubit extends Cubit<AuthCubitState> {
     emit(state.copyWith(status: AuthCubitStatus.loading));
     String phoneNumber = state.phoneNumber;
     Duration timeOut = const Duration(seconds: 0);
+    // ignore: prefer_function_declarations_over_variables
     final verificationFailed = (exp) {
       emit(
         state.copyWith(
           status: AuthCubitStatus.error,
+          // ignore: avoid_dynamic_calls
           failure: Failure(message: exp.message),
         ),
       );
     };
+    // ignore: prefer_function_declarations_over_variables
     final authCompleted = (authCredential) async {
       await _firebaseAuth.signInWithCredential(authCredential);
     };
+    // ignore: prefer_function_declarations_over_variables
     final codeSend = (String verificationId, int? resendToekn) {
       emit(
         state.copyWith(

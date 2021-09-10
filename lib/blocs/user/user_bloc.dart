@@ -15,13 +15,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository _userRepository;
   final AuthBloc _authBloc;
 
+  StreamSubscription<List<User>>? _userSubscribtion;
+
   UserBloc({
     required UserRepository userRepository,
     required AuthBloc authBloc,
   })  : _userRepository = userRepository,
         _authBloc = authBloc,
         super(UserState.initial());
-
 
   @override
   Stream<UserState> mapEventToState(
@@ -35,6 +36,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield* _mapUpdateUserEventToState(event);
     } else if (event is UserUpdateCodeName) {
       yield* _mapUpdateCodeNameEventToState(event);
+    } else if (event is UserGetUserWithRadius) {
+      yield* _mapGetUserWitRadiusEventToState(event);
     }
   }
 
@@ -58,6 +61,19 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       codeName: event.codeName,
       id: _authBloc.state.user!.uid,
     );
+    yield state.copyWith(status: UserStatus.success);
+  }
+
+  Stream<UserState> _mapGetUserWitRadiusEventToState(
+      UserGetUserWithRadius event) async* {
+    _userSubscribtion?.cancel();
+    _userSubscribtion = _userRepository
+        .getUserWithInRadius(radius: 10, center: event.center)
+        .listen((users) {
+      // add(UserUpdateUser(users: users));
+      state.copyWith(users: users);
+    });
+
     yield state.copyWith(status: UserStatus.success);
   }
 

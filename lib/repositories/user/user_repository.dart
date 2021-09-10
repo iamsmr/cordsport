@@ -39,7 +39,7 @@ class UserRepository extends BaseUserRepository {
   List<QueryDocumentSnapshot<Object?>> _distanceQuery(
       List<QueryDocumentSnapshot<Object?>> users, Position center) {
     List<QueryDocumentSnapshot<Object?>> _newUsers = [];
-    for (int i = 0; i < users.length; i++) {
+    for (int i = 0; i <= users.length; i++) {
       final point = center;
       final data = users[i].data() as Map<String, dynamic>;
       final cordinats = data["cordinates"] as GeoPoint;

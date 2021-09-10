@@ -23,26 +23,6 @@ class Message extends Equatable {
     required this.convercationId,
   });
 
-  Message copyWith({
-    String? text,
-    User? other,
-    User? me,
-    DateTime? timestamp,
-    bool? messageRead,
-    String? messageId,
-    String? convercationId,
-  }) {
-    return Message(
-      text: text ?? this.text,
-      other: other ?? this.other,
-      me: me ?? this.me,
-      datetime: timestamp ?? datetime,
-      messageRead: messageRead ?? this.messageRead,
-      messageId: messageId ?? this.messageId,
-      convercationId: convercationId ?? this.convercationId,
-    );
-  }
-
   @override
   bool get stringify => true;
 
@@ -51,7 +31,7 @@ class Message extends Equatable {
       'text': text,
       'other': toDocumentRefrence(other),
       'me': toDocumentRefrence(me),
-      'timestamp': datetime.millisecondsSinceEpoch,
+      'timestamp': Timestamp.fromDate(datetime),
       'messageRead': messageRead,
       'convercationId': convercationId,
     };
@@ -73,7 +53,7 @@ class Message extends Equatable {
           me: User.fromDocument(meDoc),
           datetime: (data["timestamp"] as Timestamp).toDate(),
           messageRead: data["messageRead"] ?? false,
-          messageId: data["messageId"] ?? "",
+          messageId: snapshot.id,
           convercationId: data["convercationId"] ?? "",
         );
       }
@@ -95,5 +75,25 @@ class Message extends Equatable {
       messageId,
       convercationId,
     ];
+  }
+
+  Message copyWith({
+    String? text,
+    User? other,
+    User? me,
+    DateTime? timestamp,
+    bool? messageRead,
+    String? messageId,
+    String? convercationId,
+  }) {
+    return Message(
+      text: text ?? this.text,
+      other: other ?? this.other,
+      me: me ?? this.me,
+      datetime: timestamp ?? datetime,
+      messageRead: messageRead ?? this.messageRead,
+      messageId: messageId ?? this.messageId,
+      convercationId: convercationId ?? this.convercationId,
+    );
   }
 }

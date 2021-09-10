@@ -13,7 +13,7 @@ part 'location_state.dart';
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
   StreamSubscription<List<User>>? _userSubscribtion;
   final UserRepository _userRepository;
-  late StreamSubscription<Position> _locationSubscription;
+  StreamSubscription<Position>? _locationSubscription;
 
   final UserBloc _userBloc;
 
@@ -41,16 +41,16 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   }
 
   Stream<LocationState> _mapLocationStartedEventToState() async* {
-    yield(LocationLoadInProgress());
-    // _locationSubscription.cancel();
+    yield (LocationLoadInProgress());
+    _locationSubscription?.cancel();
     _userSubscribtion?.cancel();
     _locationSubscription = Geolocator.getPositionStream().listen((position) {
-      _userBloc.add(UserUpdatePosition(position: position));
       _userRepository
           .getUserWithInRadius(radius: 10, center: position)
           .listen((users) {
         _userBloc.add(UserUpdateUser(users: users));
       });
+      _userBloc.add(UserUpdatePosition(position: position));
       add(LocationChanged(position: position));
 
       // (LocationLoadSuccess(position: position));
@@ -59,10 +59,10 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   @override
   Future<void> close() {
-    _locationSubscription.cancel();
+    _locationSubscription?.cancel();
+    _userSubscribtion?.cancel();
     return super.close();
   }
-
 
   // TODO: implement later
 

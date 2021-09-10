@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
-import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
+import 'package:codespot/screens/Authentication/cubit/auth_cubit.dart';
 import 'package:codespot/screens/Authentication/verification_page.dart';
 
 class LoginPage extends StatefulWidget {

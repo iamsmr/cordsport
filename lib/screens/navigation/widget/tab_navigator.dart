@@ -1,7 +1,11 @@
+import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/config/custom_router.dart';
 import 'package:codespot/enums/enums.dart';
+import 'package:codespot/repositories/chat/chat_repository.dart';
+import 'package:codespot/screens/chat/cubit/message_cubit.dart';
 import 'package:codespot/screens/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TabNavigator extends StatelessWidget {
   static const String tabNavigatorRoot = "/";
@@ -40,7 +44,7 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.home:
         return const HomePage();
       case BottomNavItem.chat:
-        return ChatScreen();
+        return const ChatScreen();
       case BottomNavItem.profile:
         return const ProfileScreren();
       default:

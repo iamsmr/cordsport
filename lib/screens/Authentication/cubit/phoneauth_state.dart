@@ -1,4 +1,4 @@
-part of 'auth-cubit.dart';
+part of 'auth_cubit.dart';
 
 enum AuthCubitStatus { initial, loading, goToVerification, error, success }
 

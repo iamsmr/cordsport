@@ -36,7 +36,7 @@ class MessageCubit extends Cubit<MessageState> {
         me: me,
         datetime: DateTime.now(),
         messageRead: false,
-        convercationId: convId,
+        convercationId: normalize(convId),
       );
       await _chatRepository.sendMessage(message: message);
       emit(state.copyWith(status: MessageStatus.send));
@@ -44,4 +44,11 @@ class MessageCubit extends Cubit<MessageState> {
       emit(state.copyWith(status: MessageStatus.error, failure: e));
     }
   }
+
+  String normalize(String str) => (str
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^a-z0-9]', caseSensitive: false), '')
+          .split('')
+        ..sort())
+      .join('');
 }

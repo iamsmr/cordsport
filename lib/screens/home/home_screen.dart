@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      context.read<LocationBloc>().add(LocationStarted());
       final Uint8List markerIcon =
           await getBytesFromAsset('assets/images/active.png', 50);
       setState(() => _markerIcon = markerIcon);
@@ -52,80 +53,95 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: const Drawer(),
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-          icon: const Icon(Icons.notes_rounded),
-        ),
-        title: const Text(
-          "CORDSPOT",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () {
-              context.read<AuthBloc>().add(AuthLogoutRequested());
-            },
-          )
-        ],
-      ),
-      body: BlocBuilder<LocationBloc, LocationState>(
+    return BlocBuilder<LocationBloc, LocationState>(
         builder: (context, locationState) {
-          if (locationState is LocationInitial) {
-            return const Loading();
-          }
-          if (locationState is LocationLoadSuccess) {
-            return GoogleMap(
-              onMapCreated: (controller) {
-                setState(() {
-                  _googleMapController = controller;
-                });
-              },
-              mapType: MapType.terrain,
-              myLocationEnabled: false,
-              markers: Set.from(
-                context.read<UserBloc>().state.users.map((user) {
-                  return Marker(
-                    icon: BitmapDescriptor.defaultMarker,
-                    // icon: BitmapDescriptor.fromBytes(_markerIcon!),
-
-                    // icon: BitmapDescriptor.defaultMarkerWithHue(
-                    //     _isCurrentUser(context, user.uid) ? 0 : 200),
-
-                    infoWindow: InfoWindow(
-                      title: user.codeName,
-                      snippet:
-                          _isCurrentUser(context, user.uid) ? "You" : "User",
+      if (locationState is LocationInitial) {
+        return const Loading();
+      } else if (locationState is LocationLoadSuccess) {
+        return BlocBuilder<UserBloc, UserState>(
+          builder: (context, userState) {
+            return Scaffold(
+                key: _scaffoldKey,
+                drawer: const Drawer(),
+                appBar: AppBar(
+                  leading: IconButton(
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                    icon: const Icon(Icons.notes_rounded),
+                  ),
+                  title: const Text(
+                    "CORDSPOT",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.exit_to_app),
+                      onPressed: () {
+                        context.read<AuthBloc>().add(AuthLogoutRequested());
+                      },
                     ),
-                    markerId: MarkerId(user.uid),
-                    position: user.cordinates,
+                    IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () {
+                        context.read<UserBloc>().add(
+                              UserGetUserWithRadius(
+                                  center: locationState.position),
+                            );
+                      },
+                    )
+                  ],
+                ),
+                body: BlocBuilder<UserBloc, UserState>(
+                    builder: (context, userState) {
+                  return GoogleMap(
+                    onMapCreated: (controller) {
+                      setState(() {
+                        _googleMapController = controller;
+                      });
+                    },
+                    mapType: MapType.terrain,
+                    myLocationEnabled: false,
+                    markers: Set.from(
+                      userState.users.map((user) {
+                        return Marker(
+                          icon: BitmapDescriptor.defaultMarker,
+                          // icon: BitmapDescriptor.fromBytes(_markerIcon!),
+
+                          // icon: BitmapDescriptor.defaultMarkerWithHue(
+                          //     _isCurrentUser(context, user.uid) ? 0 : 200),
+
+                          infoWindow: InfoWindow(
+                            title: user.codeName,
+                            snippet: _isCurrentUser(context, user.uid)
+                                ? "You"
+                                : "User",
+                          ),
+                          markerId: MarkerId(user.uid),
+                          position: user.cordinates,
+                        );
+                      }),
+                    ),
+                    circles: {
+                      Circle(
+                        circleId: const CircleId("1km circle"),
+                        center: toLatlng(locationState.position),
+                        radius: 1000,
+                        fillColor: Colors.blue.withOpacity(.2),
+                        strokeWidth: 2,
+                        strokeColor: Colors.blue,
+                      )
+                    },
+                    initialCameraPosition: CameraPosition(
+                      target: toLatlng(locationState.position),
+                      zoom: 15,
+                    ),
                   );
-                }),
-              ),
-              circles: {
-                Circle(
-                  circleId: const CircleId("1km circle"),
-                  center: toLatlng(locationState.position),
-                  radius: 1000,
-                  fillColor: Colors.blue.withOpacity(.2),
-                  strokeWidth: 2,
-                  strokeColor: Colors.blue,
-                )
-              },
-              initialCameraPosition: CameraPosition(
-                target: toLatlng(locationState.position),
-                zoom: 15,
-              ),
-            );
-          }
-          return const Loading();
-        },
-      ),
-    );
+                }));
+          },
+        );
+      } else {
+        return Container();
+      }
+    });
   }
 
   LatLng toLatlng(Position position) {

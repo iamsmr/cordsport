@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:codespot/config/names.dart';
 import 'package:codespot/config/paths.dart';
 import 'package:codespot/models/models.dart';
 import 'package:codespot/repositories/auth/base_auth_repository.dart';
@@ -38,10 +41,12 @@ class AuthRepository extends BaseAuthRepository {
       final userDocRef =
           _firebaseFirestore.collection(Paths.users).doc(user?.uid);
 
+      final codeNmae = randomName();
+
       userDocRef.get().then((value) {
         if (!value.exists) {
           userDocRef.set({
-            "codeName": "",
+            "codeName": codeNmae,
             "uid": user?.uid,
             "phoneNumber": user?.phoneNumber,
             "cordinates": const GeoPoint(0, 0),
@@ -125,6 +130,10 @@ class AuthRepository extends BaseAuthRepository {
     );
   }
 
+  String randomName() {
+    return names[Random().nextInt(names.length - 1)];
+  }
+
   @override
   Future<auth.User?> signInWithPhoneWeb({
     required String smsCode,
@@ -139,7 +148,7 @@ class AuthRepository extends BaseAuthRepository {
 
   _setInitialUserInfoToFirestore(auth.User? user) async {
     await _firebaseFirestore.collection(Paths.users).doc(user?.uid).set({
-      "codeName": "",
+      "codeName": randomName(),
       "uid": user?.uid,
       "phoneNumber": user?.phoneNumber,
       "cordinates": const GeoPoint(0, 0),

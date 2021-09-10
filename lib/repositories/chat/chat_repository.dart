@@ -14,10 +14,7 @@ class ChatRepository extends BaseChatRepository {
       : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
 
   @override
-  Stream<List<Future<Message?>>> getMessage({
-    required String convId,
-    required String msgId,
-  }) {
+  Stream<List<Future<Message?>>> getMessage({required String convId}) {
     try {
       final message = _firebaseFirestore
           .collection(Paths.conversations)
@@ -57,5 +54,14 @@ class ChatRepository extends BaseChatRepository {
     } on SocketException catch (e) {
       throw Failure(message: e.message);
     }
+  }
+
+  @override
+  Future<bool> isConverstationExist({required String convId}) async {
+    final snap = await _firebaseFirestore
+        .collection(Paths.conversations)
+        .doc(convId)
+        .get();
+    return snap.exists;
   }
 }

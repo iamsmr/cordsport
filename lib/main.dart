@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +6,7 @@ import 'package:codespot/blocs/bloc_observer.dart';
 import 'package:codespot/blocs/blocs.dart';
 import 'package:codespot/repositories/repositories.dart';
 
-import 'package:codespot/screens/Authentication/cubit/auth-cubit.dart';
+import 'package:codespot/screens/Authentication/cubit/auth_cubit.dart';
 import 'package:codespot/config/custom_router.dart';
 
 Future main() async {
@@ -25,7 +24,8 @@ class MyApp extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(create: (_) => AuthRepository()),
-        RepositoryProvider<UserRepository>(create: (_) => UserRepository())
+        RepositoryProvider<UserRepository>(create: (_) => UserRepository()),
+        RepositoryProvider<ChatRepository>(create: (_) => ChatRepository()),
       ],
       child: MultiBlocProvider(
         providers: [

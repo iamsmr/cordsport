@@ -25,6 +25,16 @@ class UserUpdatePosition extends UserEvent {
   List<Object?> get props => [position, id];
 }
 
+class UserGetUserWithRadius extends UserEvent {
+  final Position center;
+  const UserGetUserWithRadius({
+    required this.center,
+  });
+
+  @override
+  List<Object?> get props => [center];
+}
+
 class UserUpdateCodeName extends UserEvent {
   final String codeName;
   const UserUpdateCodeName({required this.codeName});
